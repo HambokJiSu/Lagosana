@@ -64,10 +64,10 @@ async def websocket_endpoint(websocket: WebSocket):
                     messages = client.beta.threads.messages.list(thread_id=thread.id)
                     assistant_message = messages.data[0].content[0].text.value
                     
-                    # 토큰 단위로 분할하여 전송
-                    words = assistant_message.split()
-                    for word in words:
-                        await websocket.send_text(json.dumps({"type": "token", "message": word + " "}))
+                    # 줄 단위로 분할하여 전송
+                    lines = assistant_message.splitlines(True)  # keepends=True로 개행문자 유지
+                    for line in lines:
+                        await websocket.send_text(json.dumps({"type": "token", "message": line}))
                         await asyncio.sleep(0.1)
                     
                     await websocket.send_text(json.dumps({"type": "end", "message": ""}))
