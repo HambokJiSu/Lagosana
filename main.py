@@ -199,9 +199,9 @@ if __name__ == "__main__":
             app,
             host="0.0.0.0",
             port=8088,
-            ssl_certfile="chat.lagosana.com-crt.pem",
-            ssl_keyfile="chat.lagosana.com-key.pem",
-            ssl_keyfile_password="Time@2kill",
+            ssl_certfile=config["CERTS"]["sslCertfile"],
+            ssl_keyfile=config["CERTS"]["sslKeyfile"],
+            ssl_keyfile_password=config["CERTS"]["sslKeyfilePass"],
         )
     else:  # 개발환경에서는 SSL 미적용
         uvicorn.run(app, host="0.0.0.0", port=8088)
