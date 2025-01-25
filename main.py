@@ -126,6 +126,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         thread_id=thread.id, assistant_id=ASSISTANT_ID
                     )
                 except Exception as e:
+                    print("Exception! ==> " + e.error.message)
                     await websocket.send_text(
                         json.dumps(
                             {
