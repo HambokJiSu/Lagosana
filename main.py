@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 import asyncio
@@ -77,13 +77,37 @@ async def wait_for_run_completion(thread_id: str, run_id: str, websocket: WebSoc
             await asyncio.sleep(RETRY_DELAY)
 
 
+# 활성 연결 관리를 위한 클래스 추가
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: dict = {}
+
+    async def connect(self, websocket: WebSocket, client_id: str):
+        await websocket.accept()
+        self.active_connections[client_id] = websocket
+
+    def disconnect(self, client_id: str):
+        if client_id in self.active_connections:
+            del self.active_connections[client_id]
+
+    async def send_message(self, message: str, client_id: str):
+        if client_id in self.active_connections:
+            try:
+                await self.active_connections[client_id].send_text(message)
+            except RuntimeError:
+                # 연결이 이미 닫힌 경우 무시
+                self.disconnect(client_id)
+
+manager = ConnectionManager()
+
 @app.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-
+    client_id = str(id(websocket))  # 각 연결에 고유 ID 할당
+    await manager.connect(websocket, client_id)
+    
     try:
         thread = client.beta.threads.create()
-
+        
         while True:
             try:
                 # 클라이언트로부터 메시지 수신
@@ -94,29 +118,29 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 if data == "new_session":
                     thread = client.beta.threads.create()
-                    await websocket.send_text(
-                        json.dumps(
-                            {
-                                "type": "session",
-                                "message": "새로운 세션이 시작되었습니다.",
-                            }
-                        )
+                    await manager.send_message(
+                        json.dumps({
+                            "type": "session",
+                            "message": "새로운 세션이 시작되었습니다."
+                        }),
+                        client_id
                     )
                     continue
 
                 # 메시지 생성
                 try:
                     message = client.beta.threads.messages.create(
-                        thread_id=thread.id, role="user", content=data
+                        thread_id=thread.id,
+                        role="user",
+                        content=data
                     )
                 except Exception as e:
-                    await websocket.send_text(
-                        json.dumps(
-                            {
-                                "type": "error",
-                                "message": "메시지 생성 중 오류가 발생했습니다.",
-                            }
-                        )
+                    await manager.send_message(
+                        json.dumps({
+                            "type": "error",
+                            "message": "메시지 생성 중 오류가 발생했습니다."
+                        }),
+                        client_id
                     )
                     continue
 
@@ -127,13 +151,12 @@ async def websocket_endpoint(websocket: WebSocket):
                     )
                 except Exception as e:
                     print("Exception! ==> " + e.error.message)
-                    await websocket.send_text(
-                        json.dumps(
-                            {
-                                "type": "error",
-                                "message": "실행 생성 중 오류가 발생했습니다.",
-                            }
-                        )
+                    await manager.send_message(
+                        json.dumps({
+                            "type": "error",
+                            "message": "실행 생성 중 오류가 발생했습니다."
+                        }),
+                        client_id
                     )
                     continue
 
@@ -143,53 +166,69 @@ async def websocket_endpoint(websocket: WebSocket):
                 )
 
                 if not success:
-                    await websocket.send_text(
-                        json.dumps({"type": "error", "message": result})
+                    await manager.send_message(
+                        json.dumps({"type": "error", "message": result}),
+                        client_id
                     )
                     continue
 
                 try:
                     messages = client.beta.threads.messages.list(thread_id=thread.id)
                     assistant_message = messages.data[0].content[0].text.value
-
+                    
                     end_time = time.time()
                     elapsed_time = end_time - start_time
                     print(f"응답 시작까지 소요된 시간: {elapsed_time:.2f}초")
-
-                    # 줄 단위로 분할하여 전송
+                    
                     lines = assistant_message.splitlines(True)
                     for line in lines:
-                        await websocket.send_text(
-                            json.dumps({"type": "token", "message": line})
+                        await manager.send_message(
+                            json.dumps({"type": "token", "message": line}),
+                            client_id
                         )
                         await asyncio.sleep(0.1)
-
-                    await websocket.send_text(
-                        json.dumps({"type": "end", "message": ""})
+                    
+                    await manager.send_message(
+                        json.dumps({"type": "end", "message": ""}),
+                        client_id
                     )
 
                 except Exception as e:
-                    await websocket.send_text(
-                        json.dumps(
-                            {
-                                "type": "error",
-                                "message": "응답 처리 중 오류가 발생했습니다.",
-                            }
-                        )
-                    )
-
-            except Exception as e:
-                await websocket.send_text(
-                    json.dumps(
-                        {
+                    await manager.send_message(
+                        json.dumps({
                             "type": "error",
-                            "message": f"처리 중 오류가 발생했습니다: {str(e)}",
-                        }
+                            "message": "응답 처리 중 오류가 발생했습니다."
+                        }),
+                        client_id
                     )
-                )
 
+            except WebSocketDisconnect:
+                manager.disconnect(client_id)
+                break
+            except Exception as e:
+                try:
+                    await manager.send_message(
+                        json.dumps({
+                            "type": "error",
+                            "message": f"처리 중 오류가 발생했습니다: {str(e)}"
+                        }),
+                        client_id
+                    )
+                except:
+                    break
+
+    except WebSocketDisconnect:
+        manager.disconnect(client_id)
     except Exception as e:
-        await websocket.send_text(json.dumps({"type": "error", "message": str(e)}))
+        try:
+            await manager.send_message(
+                json.dumps({"type": "error", "message": str(e)}),
+                client_id
+            )
+        except:
+            pass
+    finally:
+        manager.disconnect(client_id)
 
 
 if __name__ == "__main__":

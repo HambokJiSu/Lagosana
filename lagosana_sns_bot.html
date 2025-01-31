@@ -47,7 +47,18 @@
     <script>
         // let ws = new WebSocket('ws://localhost:8088/chat');
         // let ws = new WebSocket('wss://chat.lagosana.com:8088/chat');
-        let ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
+
+        const params = new URLSearchParams(window.location.search);
+        const runEnv = params.get("runEnv");
+        debugger;
+
+        let ws;
+        if (runEnv == 'local') {
+            ws = new WebSocket('ws://localhost:8088/chat');
+        } else {
+            ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
+        }
+
         let currentResponseArea = null;
         let selectedSNS = null;
         let isLoading = false;
