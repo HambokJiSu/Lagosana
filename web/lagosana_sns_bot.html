@@ -47,7 +47,6 @@
 
         const params = new URLSearchParams(window.location.search);
         const runEnv = params.get("runEnv");
-        debugger;
 
         let ws;
         if (runEnv == 'local') {
@@ -174,20 +173,21 @@
         }
 
         function startNewSession() {
-            hideLoading();
-            ws.send('new_session');
-            selectedSNS = null;
+            location.reload();
+            // hideLoading();
+            // ws.send('new_session');
+            // selectedSNS = null;
             
-            const snsOptions = document.getElementsByName('sns');
-            for (const option of snsOptions) {
-                option.checked = false;
-                option.disabled = false;
-            }
+            // const snsOptions = document.getElementsByName('sns');
+            // for (const option of snsOptions) {
+            //     option.checked = false;
+            //     option.disabled = false;
+            // }
             
-            document.querySelector('.btn-primary').disabled = false;
-            document.getElementById('initialResponseText').textContent = '';
-            document.getElementById('chatContainer').style.display = 'none';
-            document.getElementById('chatContainer').innerHTML = '';
+            // document.querySelector('.btn-primary').disabled = false;
+            // document.getElementById('initialResponseText').textContent = '';
+            // document.getElementById('chatContainer').style.display = 'none';
+            // document.getElementById('chatContainer').innerHTML = '';
         }
 
         window.onbeforeunload = function() {
