@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Get Auth1</title>
+</head>
+<body>
+    <div>
+        <input type="text" id="code" />
+    </div>
+    <div>
+        <input type="text" id="state" />
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
+        const state = params.get("state");
+
+        document.getElementById("code").value = code;
+        document.getElementById("state").value = state;
+    </script>
+</body>
