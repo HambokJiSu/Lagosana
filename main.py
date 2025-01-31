@@ -5,6 +5,7 @@ import asyncio
 import json
 from datetime import datetime
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 from configparser import ConfigParser
 
@@ -34,48 +35,55 @@ RETRY_DELAY = 2  # 초
 RUN_TIMEOUT = 30  # 초
 POLL_INTERVAL = 0.5  # 초
 
+# 스레드 풀 생성
+executor = ThreadPoolExecutor(max_workers=10)
+
+# OpenAI API 호출을 위한 별도 함수
+def call_openai_api(thread_id: str, run_id: str):
+    return client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
 
 async def wait_for_run_completion(thread_id: str, run_id: str, websocket: WebSocket):
     """실행 완료를 기다리는 함수"""
     start_time = datetime.now()
     retry_count = 0
+    
+    # 초기 대기 시간을 줄임
+    initial_poll_interval = 0.1
+    max_poll_interval = 0.5
+    current_poll_interval = initial_poll_interval
 
     while True:
         try:
-            run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
+            # 비동기 실행을 위한 루프 이벤트에서 실행
+            run = await asyncio.get_event_loop().run_in_executor(
+                executor, 
+                call_openai_api, 
+                thread_id, 
+                run_id
+            )
 
             # 실행 상태 체크
             if run.status == "completed":
                 return True, run
-            elif run.status == "failed":
-                return False, "실행이 실패했습니다."
-            elif run.status == "expired":
-                return False, "실행 시간이 만료되었습니다."
-            elif run.status == "cancelled":
-                return False, "실행이 취소되었습니다."
+            elif run.status in ["failed", "expired", "cancelled"]:
+                return False, f"실행이 {run.status} 상태가 되었습니다."
 
             # 타임아웃 체크
             elapsed_time = (datetime.now() - start_time).total_seconds()
             if elapsed_time > RUN_TIMEOUT:
-                await websocket.send_text(
-                    json.dumps(
-                        {
-                            "type": "error",
-                            "message": "응답 시간이 초과되었습니다. 다시 시도해주세요.",
-                        }
-                    )
-                )
                 return False, "시간 초과"
 
-            await asyncio.sleep(POLL_INTERVAL)
+            # 점진적으로 폴링 간격 증가 (exponential backoff)
+            current_poll_interval = min(current_poll_interval * 1.5, max_poll_interval)
+            await asyncio.sleep(current_poll_interval)
 
         except Exception as e:
             retry_count += 1
             if retry_count >= MAX_RETRY_ATTEMPTS:
                 return False, f"API 호출 중 오류가 발생했습니다: {str(e)}"
-
-            await asyncio.sleep(RETRY_DELAY)
-
+            
+            # 재시도 시 대기 시간을 점진적으로 증가
+            await asyncio.sleep(RETRY_DELAY * retry_count)
 
 # 활성 연결 관리를 위한 클래스 추가
 class ConnectionManager:
@@ -102,22 +110,28 @@ manager = ConnectionManager()
 
 @app.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket):
-    client_id = str(id(websocket))  # 각 연결에 고유 ID 할당
+    client_id = str(id(websocket))
     await manager.connect(websocket, client_id)
     
     try:
-        thread = client.beta.threads.create()
+        # 스레드 생성을 비동기로 처리
+        thread = await asyncio.get_event_loop().run_in_executor(
+            executor,
+            client.beta.threads.create
+        )
         
         while True:
             try:
-                # 클라이언트로부터 메시지 수신
                 data = await websocket.receive_text()
                 start_time = time.time()
 
                 print(f"Received message: {data}")
 
                 if data == "new_session":
-                    thread = client.beta.threads.create()
+                    thread = await asyncio.get_event_loop().run_in_executor(
+                        executor,
+                        client.beta.threads.create
+                    )
                     await manager.send_message(
                         json.dumps({
                             "type": "session",
@@ -127,12 +141,15 @@ async def websocket_endpoint(websocket: WebSocket):
                     )
                     continue
 
-                # 메시지 생성
+                # 메시지 생성을 비동기로 처리
                 try:
-                    message = client.beta.threads.messages.create(
-                        thread_id=thread.id,
-                        role="user",
-                        content=data
+                    message = await asyncio.get_event_loop().run_in_executor(
+                        executor,
+                        lambda: client.beta.threads.messages.create(
+                            thread_id=thread.id,
+                            role="user",
+                            content=data
+                        )
                     )
                 except Exception as e:
                     await manager.send_message(
@@ -144,10 +161,14 @@ async def websocket_endpoint(websocket: WebSocket):
                     )
                     continue
 
-                # 실행 생성
+                # 실행 생성을 비동기로 처리
                 try:
-                    run = client.beta.threads.runs.create(
-                        thread_id=thread.id, assistant_id=ASSISTANT_ID
+                    run = await asyncio.get_event_loop().run_in_executor(
+                        executor,
+                        lambda: client.beta.threads.runs.create(
+                            thread_id=thread.id,
+                            assistant_id=ASSISTANT_ID
+                        )
                     )
                 except Exception as e:
                     print("Exception! ==> " + e.error.message)
