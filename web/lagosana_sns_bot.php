@@ -9,7 +9,7 @@
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $customer = isset($_POST['customer']) ? json_decode($_POST['customer'], true) : null;
     if ($customer) {
-        echo "<script>var customerData = " . json_encode($customer) . ";</script>";
+        echo "<script>var customerData = " . json_encode($customer) . ";console.log(customerData);</script>";
     }
 }
 ?>
