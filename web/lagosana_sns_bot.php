@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     
     <div class="header-container">
-        <div class="menu-title">Blog Content Generator</div>
+        <div class="menu-title" id="menuTitle">Blog Content Generator</div>
         <div class="controls">
             <button class="btn btn-dark" onclick="startNewSession()">새 질문 시작</button>
         </div>
@@ -52,6 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script>
         // let ws = new WebSocket('ws://localhost:8088/chat');
         // let ws = new WebSocket('wss://chat.lagosana.com:8088/chat');
+
+        document.querySelector("#menuTitle").innerHTML = `Blog Content Generator(${customerData.name})`;
 
         const params = new URLSearchParams(window.location.search);
         const runEnv = params.get("runEnv");
