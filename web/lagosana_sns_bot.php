@@ -8,8 +8,10 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $customer = isset($_POST['customer']) ? json_decode($_POST['customer'], true) : null;
-    if ($customer) {
-        echo "<script>var customerData = " . json_encode($customer) . ";console.log(customerData);</script>";
+
+    if (!$customer || isset($customer['group_name']) || $customer['group_name'] === "VIP") {
+        // VIP가 아닌 경우, 접근 제한 메시지를 출력하고 종료
+        die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
     }
 }
 ?>
@@ -53,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // let ws = new WebSocket('ws://localhost:8088/chat');
         // let ws = new WebSocket('wss://chat.lagosana.com:8088/chat');
 
-        document.querySelector("#menuTitle").innerHTML = `Blog Content Generator(${customerData.name})`;
+        // document.querySelector("#menuTitle").innerHTML = `Blog Content Generator(${customerData.group_name})`;
 
         const params = new URLSearchParams(window.location.search);
         const runEnv = params.get("runEnv");
