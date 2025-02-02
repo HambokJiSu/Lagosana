@@ -7,7 +7,7 @@
 </head>
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $customer = isset($_POST['customer']) ? json_decode($_POST['customer'], true) : null;
+    $customer = json_decode($_POST['customer'] ?? '[]', true);
 
     if (empty($customer['group_name']) || $customer['group_name'] !== "VIP") {
         // VIP가 아닌 경우, 접근 제한 메시지를 출력하고 종료
