@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Blog Content Generator</title>
-    <link href="css/lagosana.css?v=1.0.0" rel="stylesheet">
+    <link href="css/lagosana.css?v=1.0.1" rel="stylesheet">
 </head>
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     
     <div class="header-container">
-        <div class="menu-title" id="menuTitle">Blog Content Generator</div>
+        <div class="menu-title">Blog Content Generator</div>
         <div class="controls">
             <button class="btn btn-dark" onclick="startNewSession()">새 질문 시작</button>
         </div>
@@ -48,28 +48,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <div class="chat-container" style="display: flex;">
         <div class="chat-set">
-            <div class="response-container" id="initialResponseText"></div>
-            <button class="copy-btn" onclick="copyToClipboard(this)">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-            </button>
+            <div class="response-wrapper">
+                <button type="button" class="copy-button" onclick="copyToClipboard(this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>복사</span>
+                </button>
+                <div class="response-container" id="initialResponseText"></div>
+            </div>
         </div>
     </div>
     <div class="chat-container" id="chatContainer">
     </div>
 
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const runEnv = params.get("runEnv");
+        // const params = new URLSearchParams(window.location.search);
+        // const runEnv = params.get("runEnv");
 
-        let ws;
-        if (runEnv == 'local') {
-            ws = new WebSocket('ws://localhost:8088/chat');
-        } else {
-            ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
-        }
+        // let ws;
+        // if (runEnv == 'local') {
+        //     ws = new WebSocket('ws://localhost:8088/chat');
+        // } else {
+        //     ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
+        // }
+
+        let ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
 
         let currentResponseArea = null;
         let selectedSNS = null;
@@ -140,6 +145,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             } else if (data.type === 'end') {
                 hideLoading();
+                if (currentResponseArea && currentResponseArea.textContent.trim()) {
+                    const copyButton = currentResponseArea.previousElementSibling;
+                    copyButton.style.display = 'flex';
+                }
                 if (!document.getElementById('chatContainer').style.display) {
                     document.getElementById('chatContainer').style.display = 'flex';
                     addNewChatSet();
@@ -182,53 +191,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     <div class="question-content" contenteditable="true" placeholder="질문을 입력하고 엔터를 누르세요..." onkeypress="handleKeyPress(event, this)"></div>
                 </div>
-                <div class="response-container"></div>
-                <button class="copy-btn" onclick="copyToClipboard(this)">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                </button>
+                <div class="response-wrapper">
+                    <button type="button" class="copy-button" onclick="copyToClipboard(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span>복사</span>
+                    </button>
+                    <div class="response-container"></div>
+                </div>
             `;
             document.getElementById('chatContainer').appendChild(chatSet);
             chatSet.querySelector('.question-content').focus();
         }
 
+        function copyToClipboard(button) {
+            const responseContainer = button.nextElementSibling;
+            const textToCopy = responseContainer.textContent;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const span = button.querySelector('span');
+                const originalText = span.textContent;
+                span.textContent = '복사됨';
+                
+                setTimeout(() => {
+                    span.textContent = originalText;
+                }, 1500);
+            });
+        }
+
         function startNewSession() {
             location.reload();
-            // hideLoading();
-            // ws.send('new_session');
-            // selectedSNS = null;
-            
-            // const snsOptions = document.getElementsByName('sns');
-            // for (const option of snsOptions) {
-            //     option.checked = false;
-            //     option.disabled = false;
-            // }
-            
-            // document.querySelector('.btn-primary').disabled = false;
-            // document.getElementById('initialResponseText').textContent = '';
-            // document.getElementById('chatContainer').style.display = 'none';
-            // document.getElementById('chatContainer').innerHTML = '';
         }
 
         window.onbeforeunload = function() {
             ws.close();
         };
-
-        // 복사 기능을 위한 새로운 함수 추가
-        function copyToClipboard(button) {
-            const chatSet = button.closest('.chat-set');
-            const responseText = chatSet.querySelector('.response-container').textContent;
-            
-            navigator.clipboard.writeText(responseText).then(() => {
-                // 복사 성공 시 버튼에 시각적 피드백 제공
-                button.classList.add('copied');
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                }, 1000);
-            });
-        }
     </script>
 </body>
 </html> 

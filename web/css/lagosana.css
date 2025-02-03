@@ -53,12 +53,11 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .response-container {
-    background: #f8f9fa;
-    padding: 16px 16px 16px 48px;
-    border-radius: 0 0 12px 12px;
+    padding: 16px 86px 16px 10px;
     white-space: pre-wrap;
     line-height: 1.5;
     word-break: break-word;
+    min-height: 48px;
 }
 .user-avatar {
     width: 32px;
@@ -113,6 +112,44 @@ body {
     white-space: pre-wrap;
     line-height: 1.5;
     word-break: break-word;
+}
+
+.response-wrapper {
+    position: relative;
+    width: 100%;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+}
+
+.copy-button {
+    position: absolute;
+    top: 16px;
+    right: 12px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 1;
+}
+
+.copy-button:hover {
+    background-color: #f8f9fa;
+}
+
+.copy-button span {
+    font-size: 13px;
+    color: #495057;
+}
+
+.copy-button svg {
+    width: 16px;
+    height: 16px;
+    color: #495057;
 }
 
 /* 부트 스트랩 일부 Start */
