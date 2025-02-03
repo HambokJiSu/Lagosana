@@ -34,32 +34,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="btn-group" role="group">
             <input type="radio" class="btn-check" name="sns" id="btnBlog" value="Blog" checked>
             <label class="btn btn-outline-primary" for="btnBlog">Blog</label>
-            
-            <input type="radio" class="btn-check" name="sns" id="btnFacebook" value="Facebook">
-            <label class="btn btn-outline-primary" for="btnFacebook">Facebook</label>
-            
+
+            <input type="radio" class="btn-check" name="sns" id="btnThreads" value="Threads">
+            <label class="btn btn-outline-primary" for="btnThreads">Threads</label>
+
             <input type="radio" class="btn-check" name="sns" id="btnInstagram" value="Instagram">
             <label class="btn btn-outline-primary" for="btnInstagram">Instagram</label>
             
-            <input type="radio" class="btn-check" name="sns" id="btnThreads" value="Threads">
-            <label class="btn btn-outline-primary" for="btnThreads">Threads</label>
+            <input type="radio" class="btn-check" name="sns" id="btnFacebook" value="Facebook">
+            <label class="btn btn-outline-primary" for="btnFacebook">Facebook</label>
         </div>
         <button class="btn btn-primary w-100 mt-3" onclick="startChat()">질문 시작</button>
     </div>
     <div class="chat-container" style="display: flex;">
         <div class="chat-set">
             <div class="response-container" id="initialResponseText"></div>
+            <button class="copy-btn" onclick="copyToClipboard(this)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            </button>
         </div>
     </div>
     <div class="chat-container" id="chatContainer">
     </div>
 
     <script>
-        // let ws = new WebSocket('ws://localhost:8088/chat');
-        // let ws = new WebSocket('wss://chat.lagosana.com:8088/chat');
-
-        // document.querySelector("#menuTitle").innerHTML = `Blog Content Generator(${customerData.group_name})`;
-
         const params = new URLSearchParams(window.location.search);
         const runEnv = params.get("runEnv");
 
@@ -182,6 +183,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="question-content" contenteditable="true" placeholder="질문을 입력하고 엔터를 누르세요..." onkeypress="handleKeyPress(event, this)"></div>
                 </div>
                 <div class="response-container"></div>
+                <button class="copy-btn" onclick="copyToClipboard(this)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </button>
             `;
             document.getElementById('chatContainer').appendChild(chatSet);
             chatSet.querySelector('.question-content').focus();
@@ -208,6 +215,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         window.onbeforeunload = function() {
             ws.close();
         };
+
+        // 복사 기능을 위한 새로운 함수 추가
+        function copyToClipboard(button) {
+            const chatSet = button.closest('.chat-set');
+            const responseText = chatSet.querySelector('.response-container').textContent;
+            
+            navigator.clipboard.writeText(responseText).then(() => {
+                // 복사 성공 시 버튼에 시각적 피드백 제공
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                }, 1000);
+            });
+        }
     </script>
 </body>
 </html> 
