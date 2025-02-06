@@ -1,0 +1,714 @@
+Windows PowerShell
+Copyright (C) 2016 Microsoft Corporation. All rights reserved.
+
+PS D:\workspace\PyLagosana>  & 'c:\Program Files\Python312\python.exe' 'c:\Users\Administrator\.vscode\extensions\ms-python.debugpy-2024.14.0-w
+in32-x64\bundled\libs\debugpy\adapter/../..\debugpy\launcher' '49702' '--' 'D:\workspace\PyLagosana\main.py'
+INFO:     Started server process [4840]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on https://0.0.0.0:8088 (Press CTRL+C to quit)
+INFO:     ('115.143.89.194', 60880) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('115.143.89.194', 14684) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Naver Blog
+응답 시작까지 소요된 시간: 6.71초
+INFO:     ('115.143.89.194', 60948) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 60949) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Tistory Blog
+응답 시작까지 소요된 시간: 6.89초
+Received message: new_session
+Received message: Threads
+응답 시작까지 소요된 시간: 8.03초
+Received message: new_session
+Received message: Threads
+응답 시작까지 소요된 시간: 10.50초
+Received message: new_session
+Received message: Instagram
+응답 시작까지 소요된 시간: 5.66초
+Received message: new_session
+Received message: Facebook
+응답 시작까지 소요된 시간: 6.77초
+Received message: new_session
+Received message: Tistory Blog
+응답 시작까지 소요된 시간: 6.88초
+Received message: new_session
+Received message: Naver Blog
+응답 시작까지 소요된 시간: 5.67초
+INFO:     connection closed
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61334) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61435) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61438) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61442) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('115.143.89.194', 1893) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 1899) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 4.87초
+Received message: new_session
+Received message: Blog
+응답 시작까지 소요된 시간: 15.26초
+Received message: Blog
+응답 시작까지 소요된 시간: 6.81초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 1960) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 5.41초
+Received message: new_session
+Received message: Instagram
+응답 시작까지 소요된 시간: 8.26초
+Received message: new_session
+Received message: Facebook
+응답 시작까지 소요된 시간: 7.57초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 1981) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 6.01초
+Received message: new_session
+Received message: Facebook
+응답 시작까지 소요된 시간: 10.30초
+INFO:     connection closed
+INFO:     123.160.223.72:41692 - "GET / HTTP/1.1" 404 Not Found
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61532) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Facebook
+응답 시작까지 소요된 시간: 7.84초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61535) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Instagram
+응답 시작까지 소요된 시간: 7.92초
+INFO:     ('115.143.89.194', 2602) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 11.78초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 2640) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Instagram
+응답 시작까지 소요된 시간: 7.43초
+Received message: 1. 목적 : 일상
+2. 키워드 : 겨울철 피부 관리
+3. 핵심내용 : 겨울철 피부관리를 위한 루틴과 각 루틴의 효과에 대해서 소개합니다.
+4. 타겟 : 피부에 관심이 많은 3-40대 여성
+응답 시작까지 소요된 시간: 16.89초
+INFO:     connection closed
+INFO:     connection closed
+INFO:     connection closed
+INFO:     152.32.141.98:64706 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     165.154.206.204:50766 - "GET / HTTP/1.1" 404 Not Found
+INFO:     165.154.206.204:52006 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     165.154.206.204:52326 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     165.154.206.204:52328 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     104.40.75.134:41128 - "GET / HTTP/1.1" 404 Not Found
+INFO:     ('223.38.91.19', 54908) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Naver Blog
+응답 시작까지 소요된 시간: 5.01초
+Received message: 일상
+응답 시작까지 소요된 시간: 5.66초
+Received message: 2. 입춘
+응답 시작까지 소요된 시간: 5.78초
+Received message: 3. 새로운 시작4. 직장인
+응답 시작까지 소요된 시간: 5.77초
+Received message: 4
+응답 시작까지 소요된 시간: 16.46초
+INFO:     connection closed
+INFO:     198.235.24.80:59028 - "GET / HTTP/1.1" 404 Not Found
+INFO:     ('115.143.89.194', 51357) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 5.32초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 52753) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('115.143.89.194', 54002) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 54941) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('115.143.89.194', 54978) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 55737) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 56031) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 56134) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 56499) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     connection closed
+INFO:     connection closed
+INFO:     ('115.143.89.194', 56581) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 56694) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 56705) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 56720) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 57039) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     5.196.113.10:45571 - "GET / HTTP/1.1" 404 Not Found
+INFO:     137.74.239.159:48179 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     167.94.138.61:44714 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     106.75.164.40:33186 - "GET / HTTP/1.1" 404 Not Found
+INFO:     106.75.189.197:37240 - "POST /token HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     ('115.143.89.194', 57574) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 58019) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 58049) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('115.143.89.194', 5998) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 6404) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 6489) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     connection closed
+INFO:     ('115.143.89.194', 60269) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 60356) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61012) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61072) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61105) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 61412) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     167.94.145.101:43314 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.94.145.101:59526 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     198.235.24.75:61384 - "GET / HTTP/1.1" 404 Not Found
+INFO:     137.74.239.157:43815 - "GET / HTTP/1.1" 404 Not Found
+INFO:     137.74.239.145:50717 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     ('115.143.89.194', 3895) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 3906) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 3953) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('115.143.89.194', 44788) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 3.89초
+Received message: Blog
+응답 시작까지 소요된 시간: 5.16초
+Received message: 1. 목적 : 지식공유2. 키워드 : 겨울철 피부 관리3. 핵심내용 : 겨울철 피부관리를 위한 루틴과 각 루틴의 효과에 대해서 소개합니다.
+4. 타겟 : 피부에 관심이 많은 3-40대 여성
+응답 시작까지 소요된 시간: 5.48초
+Received message: 1. "올 겨울, 피부를 위한 필수 루틴 5가지!"
+응답 시작까지 소요된 시간: 3.45초
+Received message: 네
+응답 시작까지 소요된 시간: 7.89초
+INFO:     connection closed
+INFO:     connection closed
+INFO:     ('106.101.69.215', 57228) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('106.249.154.147', 56112) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Naver Blog
+응답 시작까지 소요된 시간: 5.12초
+Received message: 라고사나 라나르크림 홍보 재생효과 피부과 시술 블로그글로 작성해줘
+응답 시작까지 소요된 시간: 5.36초
+Received message: 좋아
+응답 시작까지 소요된 시간: 5.76초
+Received message: 5번으로 작성해줘
+응답 시작까지 소요된 시간: 13.80초
+INFO:     ('106.249.154.147', 40034) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 6.66초
+INFO:     ('223.38.85.227', 56225) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('223.38.85.227', 56275) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: 1. 목적 :  지식공유2. 키워드 : [겨울철 피부 관리]  3. 핵심내용 : [겨울철 피부관리를 위한 루틴과 각 루틴의 효과에 대해서 소개
+합니다. ]  4. 타겟 : [피부에 관심이 많은 3-40대 여성]
+Received message: Naver Blog
+응답 시작까지 소요된 시간: 4.60초
+응답 시작까지 소요된 시간: 8.76초
+Received message: 한겨울에도 촉촉한 피부 비결, 겨울철 루틴 완전정복
+응답 시작까지 소요된 시간: 3.84초
+Received message: 네
+INFO:     connection closed
+응답 시작까지 소요된 시간: 13.27초
+Received message: 지식공유 피부과시술이후 재생관리에 좋은크림추천
+응답 시작까지 소요된 시간: 10.21초
+INFO:     connection closed
+INFO:     connection closed
+INFO:     ('223.38.85.227', 56398) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 5.20초
+INFO:     connection closed
+Received message: 매우 좋네..제안해준 컨텐츠를 사람이 읽었을 때 더 가독성이 좋게 향상된 제안을 해줘.
+응답 시작까지 소요된 시간: 6.84초
+Received message: 제안한대로 다시 작성해줘
+응답 시작까지 소요된 시간: 9.48초
+INFO:     ('106.249.154.147', 4130) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('106.249.154.147', 4411) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('106.249.154.147', 56226) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Instagram
+응답 시작까지 소요된 시간: 4.03초
+Received message: 1. 목적 : 홍보
+2. 키워드 : 석류의 미용 효과
+3. 핵심내용 :   석류의 미용 효과
+4. 타겟 : [피부에 관심이 많은 3-40대 여성]
+Received message: Threads
+응답 시작까지 소요된 시간: 16.82초
+INFO:     connection closed
+INFO:     ('106.249.154.147', 56245) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Threads
+응답 시작까지 소요된 시간: 4.44초
+Received message: 하루를 상쾌하게 보내는 비법 5가지 작성해줘
+응답 시작까지 소요된 시간: 8.83초
+Received message: 좋아
+응답 시작까지 소요된 시간: 6.61초
+Received message: 무기력함을 없애는 아침루틴으로 다시 작성해줘 타겟은 40대로 부탁해
+응답 시작까지 소요된 시간: 7.37초
+INFO:     connection closed
+INFO:     ('106.249.154.147', 56462) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Threads
+응답 시작까지 소요된 시간: 6.05초
+Received message: 마케팅 못하는 원장님들의 공통점: SNS를 하지 않는다!
+응답 시작까지 소요된 시간: 4.69초
+Received message: 마케팅 못하는 원장님들의 공통점: SNS를 하지 않는다! 주제로 스레드 글 작성해줘
+응답 시작까지 소요된 시간: 7.51초
+INFO:     connection closed
+INFO:     ('106.249.154.147', 56492) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 4.02초
+Received message: 마케팅 못하는 원장님들의 공통점: SNS를 하지 않는다!
+응답 시작까지 소요된 시간: 4.87초
+INFO:     connection closed
+INFO:     ('106.249.154.147', 56509) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('106.249.154.147', 56639) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('106.249.154.147', 5731) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('106.249.154.147', 56651) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+Received message: Blog
+응답 시작까지 소요된 시간: 10.64초
+응답 시작까지 소요된 시간: 10.52초
+Received message: 마케팅 못하는 원장님들의 공통점: SNS를 하지 않는다!
+응답 시작까지 소요된 시간: 7.98초
+Received message: 홍보,마케팅,뷰티비즈니스 원장님을 블로그 작성해줘
+응답 시작까지 소요된 시간: 4.18초
+Received message: 1. 목적 : 지식공유
+2. 키워드 : 환절기 피부관리
+3. 핵심내용 : 환절기 피부관리에 대한 피부전문가 관점의 글을 작성
+4. 타겟 : [피부에 관심이 많은 3-40대 여성]
+Received message: Sns 를 하지 않는다
+응답 시작까지 소요된 시간: 7.15초
+Received message: 환절기에도 촉촉하게! 5가지 전문가 추천 피부관리법
+응답 시작까지 소요된 시간: 11.17초
+응답 시작까지 소요된 시간: 3.28초
+Received message: 환절기에도 촉촉하게! 피부과 전문가들이 추천하는 5가지 관리법
+응답 시작까지 소요된 시간: 16.12초
+Received message: 마케팅 못하는 원장님들의 공통점: SNS를 하지 않는다! 키워드는 이거야 다시 작성해줘
+응답 시작까지 소요된 시간: 5.34초
+Received message: 5번 으로 작성해줘
+응답 시작까지 소요된 시간: 15.58초
+Received message: 5. "성장하지 않는 원장님들의 이유: SNS 활용 부족"
+응답 시작까지 소요된 시간: 13.55초
+Received message: 1. "마케팅에서 실패하는 이유: SNS를 하지 않는 원장님들" 으로 글을 다시 작성해줘
+응답 시작까지 소요된 시간: 15.86초
+INFO:     205.210.31.37:65030 - "GET / HTTP/1.1" 404 Not Found
+INFO:     connection closed
+Received message: Threads
+응답 시작까지 소요된 시간: 7.47초
+INFO:     connection closed
+INFO:     connection closed
+INFO:     connection closed
+INFO:     ('223.38.85.231', 56875) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('223.38.85.231', 57080) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 5.56초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 2787) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     165.154.100.252:57818 - "GET / HTTP/1.1" 404 Not Found
+INFO:     165.154.100.252:52444 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     165.154.100.252:52458 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     165.154.100.252:52474 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     ('115.143.89.194', 62113) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 62543) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 62846) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     ('115.143.89.194', 62934) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 63763) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 9.12초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 63973) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 64108) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 4.90초
+INFO:     ('115.143.89.194', 65089) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 6.15초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 65124) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 65134) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 65185) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 65188) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 4.57초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 65274) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 6.05초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 49235) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 6.40초
+Received message: 목적은 아몰랑
+응답 시작까지 소요된 시간: 5.07초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 49437) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 6.19초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 49896) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 6.69초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 50003) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 50041) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Threads
+응답 시작까지 소요된 시간: 7.29초
+INFO:     connection closed
+INFO:     connection closed
+INFO:     connection closed
+INFO:     ('115.143.89.194', 50289) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Threads
+응답 시작까지 소요된 시간: 6.79초
+Received message: 목적은 홍보입니다.
+응답 시작까지 소요된 시간: 8.26초
+INFO:     162.142.125.208:39652 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     ('115.143.89.194', 51153) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 51170) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 51332) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     connection closed
+INFO:     ('115.143.89.194', 51412) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 51465) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('115.143.89.194', 51492) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 7.88초
+Received message: 목적은 지식공유
+응답 시작까지 소요된 시간: 2.92초
+INFO:     connection closed
+INFO:     167.94.138.55:40862 - "GET / HTTP/1.1" 404 Not Found
+INFO:     ('58.120.68.222', 51059) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Threads
+응답 시작까지 소요된 시간: 5.53초
+INFO:     connection closed
+INFO:     ('58.120.68.222', 51081) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Threads
+응답 시작까지 소요된 시간: 6.27초
+Received message: 1. 목적 : [ 지식공유 등]
+2. 키워드 : [겨울철 피부 관리, 피부장벽관리]
+3. 핵심내용 : [아침물세안vs세안제사용 피부관리를 위한 루틴과 각 루틴의 효과에 대해서 소개합니다.]
+4. 타겟 : [피부에 관심이 많은 3-40대 여성]
+응답 시작까지 소요된 시간: 10.67초
+INFO:     connection closed
+INFO:     ('58.120.68.222', 51088) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Threads
+응답 시작까지 소요된 시간: 5.66초
+INFO:     connection closed
+INFO:     ('58.120.68.222', 51090) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('58.120.68.222', 51137) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('58.120.68.222', 63102) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('58.120.68.222', 51373) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 5.91초
+INFO:     connection closed
+INFO:     ('58.120.68.222', 63148) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('61.74.229.96', 59753) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Instagram
+응답 시작까지 소요된 시간: 5.40초
+Received message: 일상
+응답 시작까지 소요된 시간: 7.60초
+INFO:     connection closed
+INFO:     ('61.74.229.96', 60804) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 9.83초
+Received message: 홍보
+응답 시작까지 소요된 시간: 4.61초
+Received message: 2 다이어트 3 위고비 다이어트 4. 40대 여성
+응답 시작까지 소요된 시간: 4.76초
+Received message: 2번
+응답 시작까지 소요된 시간: 7.50초
+Received message: 응
+응답 시작까지 소요된 시간: 29.87초
+Received message: 위고비는 약인데?
+응답 시작까지 소요된 시간: 21.54초
+INFO:     connection closed
+INFO:     ('61.74.229.96', 60815) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     147.185.132.240:61672 - "GET / HTTP/1.1" 404 Not Found
+INFO:     ('58.120.68.222', 50350) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 4.75초
+INFO:     connection closed
+INFO:     ('58.120.68.222', 50374) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 4.92초
+Received message: 해당 SNS로 글을 작성하겠습니다. 어떤 글을 작성하고 싶으신지, 아래 내용을 작성해주세요.
+
+1. 목적 : [ 지식공유 ]
+2. 키워드 :   “우리 뇌는 왜 회원권을 원할까?”
+3. 핵심내용 : 신경경제학 연구에 따르면, 우리가 돈을 쓸 때 뇌의 ’섬피질(Insular Cortex)’이 활성화되는데, 이 부분은 신체적 통증(칼에 베이는 고
+통)과 감정적 고통을 처리하는 영역이에요.
+4. 타겟 : 뷰티비즈니스를 하는 자영업자
+응답 시작까지 소요된 시간: 6.07초
+Received message: 1. "우리 뇌는 왜 회원권을 원할까? 신경경제학으로 본 소비의 심리"
+응답 시작까지 소요된 시간: 4.86초
+Received message: 좋네
+응답 시작까지 소요된 시간: 19.22초
+Received message: 뷰티 비즈니스에서 회원권이 필요한 이유, 신경경제학으로 풀어보기“우리 뇌는 왜 회원권을 원할까?”뷰티 비즈니스에서 멤버십(회원
+권) 시스템이 필수적인 이유는 단순한 마케팅 전략이 아니라, 우리 뇌의 작동 원리와 소비 심리를 기반으로 한 과학적 접근이기 때문이에요.특히 신경경
+제학(Neuroeconomics) 관점에서 보면, 회원권이 고객의 소비 패턴과 충성도를 형성하는 데 강력한 영향을 미친다는 것을 알 수 있습니다. 고객이 왜 회원
+권을 원하고, 지속적으로 방문하게 되는지 뇌의 반응을 중심으로 살펴볼까요?1️⃣ 소비의 고통을 줄여준다: “회원권은 지출 고통을 덜어준다!”💰 소
+비할 때 뇌는 고통을 느낀다?신경경제학 연구에 따르면, 우리가 돈을 쓸 때 뇌의 ’섬피질(Insular Cortex)’이 활성화되는데, 이 부분은 신체적 통증(칼
+에 베이는 고통)과 감정적 고통을 처리하는 영역이에요.즉, 소비 자체가 우리 뇌에는 일종의 고통으로 인식된다는 것이죠.🔹 회원권이 고통을 줄이는
+이유?✔ 일회성 결제 vs. 반복 결제       •       비회원 고객: 매번 결제할 때마다 지출 고통을 느낌        •       회원권 고객: 한 번 결제 후 반복
+ 사용 → 소비 고통이 감소✔ 지출이 아닌 ‘혜택’으로 인식       •       비회원 고객: 결제할 때마다 비용이 빠져나가는 느낌       •       회원권
+고객: 비용을 내고도 ‘할인과 추가 혜택’을 받는 기분 → 뇌가 긍정적 경험으로 인식✔ 회원권 결제는 선불(Prepaid) •       선불 결제는 이미 돈을
+낸 상태이므로, 서비스 이용 시 추가 지출이 없어 마치 무료처럼 느껴짐 → 소비에 대한 부담 감소✅ 결론: 회원권 시스템은 소비 시 느끼는 ‘고통’을
+줄이고, 오히려 ‘혜택’을 강조하도록 설계됨.2️⃣ 보상 시스템을 자극한다: “도파민 분비로 재방문 유도!”🎉 보상 시스템과 도파민우리 뇌는 보상
+을 예측할 때 ‘도파민(Dopamine)’을 분비해요. 도파민은 쾌락과 동기부여를 담당하는 신경전달물질로, 보상을 받는 경험이 반복될수록 더 강하게 활성
+화됩니다.🔹 회원권이 보상 시스템을 자극하는 방법?✔ VIP 혜택 → 보상 기대감 증가      •       할인, 추가 서비스, 우선 예약 등 회원권이 제공하
+는 혜택은 우리 뇌의 보상 회로를 자극    •       뇌는 “회원권을 유지하면 앞으로도 좋은 혜택을 받을 수 있다”라고 학습✔ 정기적인 보상 제공 →
+습관화 유도     •       정기적인 스킨케어, 마사지, 트리트먼트 등을 회원권으로 받으면, 고객은 일정한 주기로 방문 •       뇌는 이를 습관으로 받아
+들이고, 방문할수록 더 방문하고 싶어지는 구조가 됨✅ 결론: 회원권 시스템은 도파민 보상 시스템을 자극해, 고객이 지속적으로 방문하고 싶도록 만듦.3
+️⃣ 손실 회피 심리를 활용한다: “이미 결제했으니 안 쓰면 손해!”💸 손실 회피(Loss Aversion)란?       •       신경경제학 연구에 따르면, 사람
+은 이득보다 손실을 2배 이상 강하게 느끼는 성향이 있어요.        •       예를 들어, 10만 원을 얻는 기쁨보다 10만 원을 잃는 고통이 더 크죠.🔹 
+회원권이 손실 회피 심리를 자극하는 방법?✔ “이미 결제했으니 안 쓰면 손해!” 심리 유발  •       회원권을 구매한 순간, 고객은 **“이걸 안 쓰면
+손해 보는 거야!”**라는 생각을 함.      •       결과적으로 서비스를 더 자주 이용하게 됨.✔ 단골 고객화 → 서비스 이용 빈도 증가 •       고객은
+이미 결제한 회원권을 활용하기 위해 같은 매장에 반복적으로 방문  •       결국 경쟁 업체보다 해당 브랜드를 더 자주 찾는 충성 고객이 됨.✅ 결론: 
+회원권을 구매한 고객은 손실을 피하기 위해 지속적으로 서비스를 이용하고, 이 과정에서 브랜드에 대한 충성도가 높아짐.4️⃣ 사회적 인정 욕구를 자극
+한다: “VIP가 되는 순간, 특별함을 느낀다!”👑 사회적 인정 욕구(Social Validation)     •       사람은 본능적으로 다른 사람들에게 인정받고 싶어
+하는 욕구가 있어요.     •       특히 VIP 대우를 받으면 뇌에서 **‘나만의 특별한 경험’**으로 인식하고 만족감을 느낌.🔹 회원권이 VIP 경험을 제
+공하는 방법?✔ VIP 전용 혜택 → 프리미엄 경험 제공      •       회원권 고객은 일반 고객보다 더 많은 혜택과 우선 예약 기회를 가짐        •
+뇌는 이를 **“나는 특별한 고객이야”**라고 인식✔ 멤버십 커뮤니티 형성 → 소속감 증가   •       VIP 회원권을 보유한 고객들은 같은 회원들과 자연
+스럽게 연결됨   •       “나도 VIP인데, 너도 VIP구나?” → 같은 가치를 공유하는 고객들이 모이며, 충성도가 더 강해짐✅ 결론: 회원권 시스템은 사
+회적 인정 욕구를 자극해 VIP 경험을 강화하고, 고객이 브랜드와 더욱 깊이 연결되도록 만듦.🔎 결론: 뷰티 비즈니스에서 회원권은 ‘뇌가 원하는 시스
+템’✔ 소비의 고통 감소 → 회원권 고객은 반복 소비를 더 쉽게 함✔ 도파민 보상 시스템 활성화 → 고객이 자연스럽게 방문을 반복✔ 손실 회피 심리
+자극 → 사용하지 않으면 손해라는 인식 유도✔ 사회적 인정 욕구 충족 → VIP 경험으로 브랜드 충성도 향상즉, 회원권 시스템은 고객의 뇌가 원하는 방
+식으로 설계된 마케팅 전략이에요.뷰티 비즈니스에서 성공하려면, 고객이 지속적으로 방문하고 싶도록 뇌의 본능을 자극하는 회원권 설계가 필수적입니다
+! 🚀👉 회원권 도입을 고민하고 있다면, 신경경제학적 원리를 활용해 더 효과적인 멤버십 시스템을 만들어보세요! 😉✨#뷰티비즈니스 #회원권전략
+#신경경제학 #고객심리 #VIP마케팅 #멤버십시스템 #충성고객 #소비심리
+응답 시작까지 소요된 시간: 22.68초
+Received message: 매우 좋네..제안해준 컨텐츠를 사람이 읽었을 때 더 가독성이 좋게 향상된 제안을 해줘.
+응답 시작까지 소요된 시간: 19.18초
+INFO:     199.45.154.113:44728 - "GET / HTTP/1.1" 404 Not Found
+INFO:     199.45.154.113:59586 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     connection closed
+INFO:     ('223.38.85.248', 50457) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('223.38.85.248', 42368) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('223.38.85.248', 50616) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('223.38.85.248', 50618) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     167.94.145.96:52340 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.94.145.96:33630 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     ('115.143.89.194', 43026) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('223.38.95.116', 55609) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('223.38.95.116', 55624) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('223.38.95.215', 49961) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     205.210.31.195:65110 - "GET / HTTP/1.1" 404 Not Found
+INFO:     ('121.131.172.17', 55668) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     ('121.131.172.17', 55681) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 4.26초
+Received message: 일상
+응답 시작까지 소요된 시간: 20.82초
+Received message: 다이어트
+응답 시작까지 소요된 시간: 4.57초
+Received message: 위고비를 사용한 다이어트
+응답 시작까지 소요된 시간: 7.11초
+Received message: 진행해줘
+응답 시작까지 소요된 시간: 7.61초
+Received message: 2
+응답 시작까지 소요된 시간: 7.89초
+Received message: 좋아
+응답 시작까지 소요된 시간: 25.62초
+INFO:     connection closed
+INFO:     167.94.138.121:41002 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     ('115.143.89.194', 2871) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Threads
+응답 시작까지 소요된 시간: 6.74초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 2976) - "WebSocket /chat" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     198.235.24.88:58420 - "GET / HTTP/1.1" 404 Not Found
+INFO:     ('115.143.89.194', 5288) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 6.62초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 5328) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+응답 시작까지 소요된 시간: 11.15초
+Received message: 목적 : 지식공유
+키워드 : 여드름 관리
+핵심내용 : 여드름 관리의 중요성, 관리 방법, 세안 방법, 주의점 공유
+타겟 : 피부에 관심많은 여성
+응답 시작까지 소요된 시간: 5.77초
+Received message: 여성들의 필수 뷰티 팁! 여드름 관리 비법 대공개
+응답 시작까지 소요된 시간: 6.65초
+Received message: 좋아요
+응답 시작까지 소요된 시간: 16.55초
+INFO:     connection closed
+INFO:     ('115.143.89.194', 5403) - "WebSocket /chat" [accepted]
+INFO:     connection open
+Received message: Blog
+INFO:     connection closed
+응답 시작까지 소요된 시간: 6.24초
