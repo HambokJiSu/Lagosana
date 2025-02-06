@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="sns-selector" id="snsSelector">
         <div class="btn-group" role="group">
-            <input type="radio" class="btn-check" name="sns" id="btnBlog" value="Blog" checked>
+            <input type="radio" class="btn-check" name="sns" id="btnBlog" value="Naver Blog" checked>
             <label class="btn btn-outline-primary" for="btnBlog">Blog</label>
 
             <input type="radio" class="btn-check" name="sns" id="btnThreads" value="Threads">
