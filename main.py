@@ -110,11 +110,15 @@ manager = ConnectionManager()
 
 @app.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket):
+    # 클라이언트 IP와 포트 정보 추출
+    client_host = websocket.client.host
+    client_port = websocket.client.port
     client_id = str(id(websocket))
+    
+    print(f"새로운 연결: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
     await manager.connect(websocket, client_id)
     
     try:
-        # 스레드 생성을 비동기로 처리
         thread = await asyncio.get_event_loop().run_in_executor(
             executor,
             client.beta.threads.create
@@ -125,7 +129,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 data = await websocket.receive_text()
                 start_time = time.time()
 
-                print(f"Received message: {data}")
+                print(f"메시지 수신 [{client_host}:{client_port}] ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}): {data}")
 
                 if data == "new_session":
                     thread = await asyncio.get_event_loop().run_in_executor(
@@ -199,7 +203,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                     end_time = time.time()
                     elapsed_time = end_time - start_time
-                    print(f"응답 시작까지 소요된 시간: {elapsed_time:.2f}초")
+                    print(f"응답 완료 [{client_host}:{client_port}] ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) - 소요시간: {elapsed_time:.2f}초")
                     
                     lines = assistant_message.splitlines(True)
                     for line in lines:
@@ -224,6 +228,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     )
 
             except WebSocketDisconnect:
+                print(f"연결 종료: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
                 manager.disconnect(client_id)
                 break
             except Exception as e:
@@ -239,6 +244,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     break
 
     except WebSocketDisconnect:
+        print(f"연결 종료: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
         manager.disconnect(client_id)
     except Exception as e:
         try:
