@@ -36,7 +36,7 @@ RUN_TIMEOUT = 30  # 초
 POLL_INTERVAL = 0.5  # 초
 
 # 스레드 풀 생성
-executor = ThreadPoolExecutor(max_workers=10)
+executor = ThreadPoolExecutor(max_workers=5)
 
 # OpenAI API 호출을 위한 별도 함수
 def call_openai_api(thread_id: str, run_id: str):
@@ -46,15 +46,10 @@ async def wait_for_run_completion(thread_id: str, run_id: str, websocket: WebSoc
     """실행 완료를 기다리는 함수"""
     start_time = datetime.now()
     retry_count = 0
-    
-    # 초기 대기 시간을 줄임
-    initial_poll_interval = 0.1
-    max_poll_interval = 0.5
-    current_poll_interval = initial_poll_interval
+    current_poll_interval = 1  # 고정된 폴링 간격
 
     while True:
         try:
-            # 비동기 실행을 위한 루프 이벤트에서 실행
             run = await asyncio.get_event_loop().run_in_executor(
                 executor, 
                 call_openai_api, 
@@ -62,28 +57,22 @@ async def wait_for_run_completion(thread_id: str, run_id: str, websocket: WebSoc
                 run_id
             )
 
-            # 실행 상태 체크
             if run.status == "completed":
                 return True, run
             elif run.status in ["failed", "expired", "cancelled"]:
                 return False, f"실행이 {run.status} 상태가 되었습니다."
 
-            # 타임아웃 체크
             elapsed_time = (datetime.now() - start_time).total_seconds()
             if elapsed_time > RUN_TIMEOUT:
                 return False, "시간 초과"
 
-            # 점진적으로 폴링 간격 증가 (exponential backoff)
-            current_poll_interval = min(current_poll_interval * 1.5, max_poll_interval)
-            await asyncio.sleep(current_poll_interval)
+            await asyncio.sleep(current_poll_interval)  # 고정된 폴링 간격
 
         except Exception as e:
             retry_count += 1
             if retry_count >= MAX_RETRY_ATTEMPTS:
                 return False, f"API 호출 중 오류가 발생했습니다: {str(e)}"
-            
-            # 재시도 시 대기 시간을 점진적으로 증가
-            await asyncio.sleep(RETRY_DELAY * retry_count)
+            await asyncio.sleep(RETRY_DELAY)  # 재시도 시 대기
 
 # 활성 연결 관리를 위한 클래스 추가
 class ConnectionManager:
@@ -175,11 +164,11 @@ async def websocket_endpoint(websocket: WebSocket):
                         )
                     )
                 except Exception as e:
-                    print("Exception! ==> " + e.error.message)
+                    print("Exception! ==> " + str(e))
                     await manager.send_message(
                         json.dumps({
                             "type": "error",
-                            "message": "실행 생성 중 오류가 발생했습니다."
+                            "message": "실행 생성 중 오류가 발생했습니다: " + str(e)
                         }),
                         client_id
                     )
@@ -198,7 +187,11 @@ async def websocket_endpoint(websocket: WebSocket):
                     continue
 
                 try:
-                    messages = client.beta.threads.messages.list(thread_id=thread.id)
+                    # messages = client.beta.threads.messages.list(thread_id=thread.id)
+                    messages = await asyncio.get_event_loop().run_in_executor(
+                        executor,
+                        lambda: client.beta.threads.messages.list(thread_id=thread.id)
+                    )
                     assistant_message = messages.data[0].content[0].text.value
                     
                     end_time = time.time()
