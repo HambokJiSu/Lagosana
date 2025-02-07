@@ -74,7 +74,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //     ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
         // }
 
-        let ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
+        // let ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
+        let ws = new WebSocket('ws://localhost:8088/chat');
 
         let currentResponseArea = null;
         let selectedSNS = null;

@@ -38,9 +38,11 @@ POLL_INTERVAL = 0.5  # 초
 # 스레드 풀 생성
 executor = ThreadPoolExecutor(max_workers=5)
 
+
 # OpenAI API 호출을 위한 별도 함수
 def call_openai_api(thread_id: str, run_id: str):
     return client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
+
 
 async def wait_for_run_completion(thread_id: str, run_id: str, websocket: WebSocket):
     """실행 완료를 기다리는 함수"""
@@ -51,10 +53,7 @@ async def wait_for_run_completion(thread_id: str, run_id: str, websocket: WebSoc
     while True:
         try:
             run = await asyncio.get_event_loop().run_in_executor(
-                executor, 
-                call_openai_api, 
-                thread_id, 
-                run_id
+                executor, call_openai_api, thread_id, run_id
             )
 
             if run.status == "completed":
@@ -73,6 +72,7 @@ async def wait_for_run_completion(thread_id: str, run_id: str, websocket: WebSoc
             if retry_count >= MAX_RETRY_ATTEMPTS:
                 return False, f"API 호출 중 오류가 발생했습니다: {str(e)}"
             await asyncio.sleep(RETRY_DELAY)  # 재시도 시 대기
+
 
 # 활성 연결 관리를 위한 클래스 추가
 class ConnectionManager:
@@ -95,7 +95,9 @@ class ConnectionManager:
                 # 연결이 이미 닫힌 경우 무시
                 self.disconnect(client_id)
 
+
 manager = ConnectionManager()
+
 
 @app.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket):
@@ -103,34 +105,38 @@ async def websocket_endpoint(websocket: WebSocket):
     client_host = websocket.client.host
     client_port = websocket.client.port
     client_id = str(id(websocket))
-    
-    print(f"새로운 연결: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
+
+    print(
+        f"새로운 연결: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})"
+    )
     await manager.connect(websocket, client_id)
-    
+
     try:
         thread = await asyncio.get_event_loop().run_in_executor(
-            executor,
-            client.beta.threads.create
+            executor, client.beta.threads.create
         )
-        
+
         while True:
             try:
                 data = await websocket.receive_text()
                 start_time = time.time()
 
-                print(f"메시지 수신 [{client_host}:{client_port}] ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}): {data}")
+                print(
+                    f"메시지 수신 [{client_host}:{client_port}] ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}): {data}"
+                )
 
                 if data == "new_session":
                     thread = await asyncio.get_event_loop().run_in_executor(
-                        executor,
-                        client.beta.threads.create
+                        executor, client.beta.threads.create
                     )
                     await manager.send_message(
-                        json.dumps({
-                            "type": "session",
-                            "message": "새로운 세션이 시작되었습니다."
-                        }),
-                        client_id
+                        json.dumps(
+                            {
+                                "type": "session",
+                                "message": "새로운 세션이 시작되었습니다.",
+                            }
+                        ),
+                        client_id,
                     )
                     continue
 
@@ -139,18 +145,18 @@ async def websocket_endpoint(websocket: WebSocket):
                     message = await asyncio.get_event_loop().run_in_executor(
                         executor,
                         lambda: client.beta.threads.messages.create(
-                            thread_id=thread.id,
-                            role="user",
-                            content=data
-                        )
+                            thread_id=thread.id, role="user", content=data
+                        ),
                     )
                 except Exception as e:
                     await manager.send_message(
-                        json.dumps({
-                            "type": "error",
-                            "message": "메시지 생성 중 오류가 발생했습니다."
-                        }),
-                        client_id
+                        json.dumps(
+                            {
+                                "type": "error",
+                                "message": "메시지 생성 중 오류가 발생했습니다.",
+                            }
+                        ),
+                        client_id,
                     )
                     continue
 
@@ -159,18 +165,20 @@ async def websocket_endpoint(websocket: WebSocket):
                     run = await asyncio.get_event_loop().run_in_executor(
                         executor,
                         lambda: client.beta.threads.runs.create(
-                            thread_id=thread.id,
-                            assistant_id=ASSISTANT_ID
-                        )
+                            thread_id=thread.id, assistant_id=ASSISTANT_ID
+                        ),
                     )
                 except Exception as e:
                     print("Exception! ==> " + str(e))
                     await manager.send_message(
-                        json.dumps({
-                            "type": "error",
-                            "message": "실행 생성 중 오류가 발생했습니다: " + str(e)
-                        }),
-                        client_id
+                        json.dumps(
+                            {
+                                "type": "error",
+                                "message": "실행 생성 중 오류가 발생했습니다: "
+                                + str(e),
+                            }
+                        ),
+                        client_id,
                     )
                     continue
 
@@ -181,8 +189,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 if not success:
                     await manager.send_message(
-                        json.dumps({"type": "error", "message": result}),
-                        client_id
+                        json.dumps({"type": "error", "message": result}), client_id
                     )
                     continue
 
@@ -190,60 +197,67 @@ async def websocket_endpoint(websocket: WebSocket):
                     # messages = client.beta.threads.messages.list(thread_id=thread.id)
                     messages = await asyncio.get_event_loop().run_in_executor(
                         executor,
-                        lambda: client.beta.threads.messages.list(thread_id=thread.id)
+                        lambda: client.beta.threads.messages.list(thread_id=thread.id),
                     )
                     assistant_message = messages.data[0].content[0].text.value
-                    
+
                     end_time = time.time()
                     elapsed_time = end_time - start_time
-                    print(f"응답 완료 [{client_host}:{client_port}] ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) - 소요시간: {elapsed_time:.2f}초")
-                    
+                    print(
+                        f"응답 완료 [{client_host}:{client_port}] ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) - 소요시간: {elapsed_time:.2f}초"
+                    )
+
                     lines = assistant_message.splitlines(True)
                     for line in lines:
                         await manager.send_message(
-                            json.dumps({"type": "token", "message": line}),
-                            client_id
+                            json.dumps({"type": "token", "message": line}), client_id
                         )
                         await asyncio.sleep(0.1)
-                    
+
                     await manager.send_message(
-                        json.dumps({"type": "end", "message": ""}),
-                        client_id
+                        json.dumps({"type": "end", "message": ""}), client_id
                     )
 
                 except Exception as e:
                     await manager.send_message(
-                        json.dumps({
-                            "type": "error",
-                            "message": "응답 처리 중 오류가 발생했습니다."
-                        }),
-                        client_id
+                        json.dumps(
+                            {
+                                "type": "error",
+                                "message": "응답 처리 중 오류가 발생했습니다.",
+                            }
+                        ),
+                        client_id,
                     )
 
             except WebSocketDisconnect:
-                print(f"연결 종료: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
+                print(
+                    f"연결 종료: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})"
+                )
                 manager.disconnect(client_id)
                 break
             except Exception as e:
                 try:
                     await manager.send_message(
-                        json.dumps({
-                            "type": "error",
-                            "message": f"처리 중 오류가 발생했습니다: {str(e)}"
-                        }),
-                        client_id
+                        json.dumps(
+                            {
+                                "type": "error",
+                                "message": f"처리 중 오류가 발생했습니다: {str(e)}",
+                            }
+                        ),
+                        client_id,
                     )
                 except:
                     break
 
     except WebSocketDisconnect:
-        print(f"연결 종료: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})")
+        print(
+            f"연결 종료: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})"
+        )
         manager.disconnect(client_id)
     except Exception as e:
         try:
             await manager.send_message(
-                json.dumps({"type": "error", "message": str(e)}),
-                client_id
+                json.dumps({"type": "error", "message": str(e)}), client_id
             )
         except:
             pass
@@ -254,14 +268,17 @@ async def websocket_endpoint(websocket: WebSocket):
 if __name__ == "__main__":
     import uvicorn
 
-    if config["SERVER"]["runEnv"] == "prod":  # 운영환경에서는 SSL 적용
-        uvicorn.run(
-            app,
-            host="0.0.0.0",
-            port=8088,
-            ssl_certfile=config["CERTS"]["sslCertfile"],
-            ssl_keyfile=config["CERTS"]["sslKeyfile"],
-            ssl_keyfile_password=config["CERTS"]["sslKeyfilePass"],
-        )
-    else:  # 개발환경에서는 SSL 미적용
-        uvicorn.run(app, host="0.0.0.0", port=8088)
+    # PHP 페이지 및 Python 모두 동일 서버에서 수행되어 SSL이 아닌 일반 uvicorn 실행하며 localhost만 접근할 수 있게 설정
+    uvicorn.run(app, host="127.0.0.1", port=8088)
+
+    # if config["SERVER"]["runEnv"] == "prod":  # 운영환경에서는 SSL 적용
+    #     uvicorn.run(
+    #         app,
+    #         host="0.0.0.0",
+    #         port=8088,
+    #         ssl_certfile=config["CERTS"]["sslCertfile"],
+    #         ssl_keyfile=config["CERTS"]["sslKeyfile"],
+    #         ssl_keyfile_password=config["CERTS"]["sslKeyfilePass"],
+    #     )
+    # else:  # 개발환경에서는 SSL 미적용
+    #     uvicorn.run(app, host="0.0.0.0", port=8088)
