@@ -269,16 +269,16 @@ if __name__ == "__main__":
     import uvicorn
 
     # PHP 페이지 및 Python 모두 동일 서버에서 수행되어 SSL이 아닌 일반 uvicorn 실행하며 localhost만 접근할 수 있게 설정
-    uvicorn.run(app, host="127.0.0.1", port=8088)
+    # uvicorn.run(app, host="127.0.0.1", port=8088)
 
-    # if config["SERVER"]["runEnv"] == "prod":  # 운영환경에서는 SSL 적용
-    #     uvicorn.run(
-    #         app,
-    #         host="0.0.0.0",
-    #         port=8088,
-    #         ssl_certfile=config["CERTS"]["sslCertfile"],
-    #         ssl_keyfile=config["CERTS"]["sslKeyfile"],
-    #         ssl_keyfile_password=config["CERTS"]["sslKeyfilePass"],
-    #     )
-    # else:  # 개발환경에서는 SSL 미적용
-    #     uvicorn.run(app, host="0.0.0.0", port=8088)
+    if config["SERVER"]["runEnv"] == "prod":  # 운영환경에서는 SSL 적용
+        uvicorn.run(
+            app,
+            host="127.0.0.1",
+            port=8088,
+            ssl_certfile=config["CERTS"]["sslCertfile"],
+            ssl_keyfile=config["CERTS"]["sslKeyfile"],
+            ssl_keyfile_password=config["CERTS"]["sslKeyfilePass"],
+        )
+    else:  # 개발환경에서는 SSL 미적용
+        uvicorn.run(app, host="0.0.0.0", port=8088)
