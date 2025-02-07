@@ -274,7 +274,7 @@ if __name__ == "__main__":
     if config["SERVER"]["runEnv"] == "prod":  # 운영환경에서는 SSL 적용
         uvicorn.run(
             app,
-            host="127.0.0.1",
+            host="0.0.0.0",
             port=8088,
             ssl_certfile=config["CERTS"]["sslCertfile"],
             ssl_keyfile=config["CERTS"]["sslKeyfile"],
