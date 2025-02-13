@@ -65,7 +65,7 @@
     <div class="chat-container" id="chatContainer"></div>
 
     <script>
-        const _API_URL = "http://localhost:8000/chat"; // FastAPI 서버의 URL
+        const _API_URL = "http://ai.lagosana.com:8088/chat"; // FastAPI 서버의 URL
         let _THREAD_ID = null; // thread_id를 저장할 변수
 
         let currentResponseArea = null;
