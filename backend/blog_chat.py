@@ -175,5 +175,15 @@ async def chat_endpoint(request: Request, chat_req: ChatRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    # uvicorn 실행 시 성능 부하를 최소화하기 위해 싱글 워커로 실행
-    uvicorn.run("blog_chat:app", host="0.0.0.0", port=8088, workers=1)
+    if config["SERVER"]["runEnv"] == "prod":  # 운영환경에서는 SSL 적용
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=8088,
+            workers=1,
+            ssl_certfile=config["CERTS"]["sslCertfile"],
+            ssl_keyfile=config["CERTS"]["sslKeyfile"],
+            ssl_keyfile_password=config["CERTS"]["sslKeyfilePass"],
+        )
+    else:  # 개발환경에서는 SSL 미적용
+        uvicorn.run(app, host="0.0.0.0", port=8088)
