@@ -176,4 +176,4 @@ if __name__ == "__main__":
     import uvicorn
 
     # uvicorn 실행 시 성능 부하를 최소화하기 위해 싱글 워커로 실행
-    uvicorn.run("blog_chat:app", host="0.0.0.0", port=8000, workers=1)
+    uvicorn.run("blog_chat:app", host="0.0.0.0", port=8088, workers=1)
