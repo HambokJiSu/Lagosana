@@ -177,7 +177,7 @@ if __name__ == "__main__":
 
     if config["SERVER"]["runEnv"] == "prod":  # 운영환경에서는 SSL 적용
         uvicorn.run(
-            "blog_chat:app",
+            app,
             host="0.0.0.0",
             port=8088,
             workers=1,
@@ -186,4 +186,4 @@ if __name__ == "__main__":
             ssl_keyfile_password=config["CERTS"]["sslKeyfilePass"],
         )
     else:  # 개발환경에서는 SSL 미적용
-        uvicorn.run("blog_chat:app", host="0.0.0.0", port=8088)
+        uvicorn.run(app, host="0.0.0.0", port=8088)
