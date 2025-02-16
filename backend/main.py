@@ -9,6 +9,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 from configparser import ConfigParser
 
+#   기존 웹소켓 방식 (현재 미사용)
+
 #   ini 값 호출
 config = ConfigParser()
 config.read("config.ini", encoding="utf-8")  # 파일 인코딩을 UTF-8로 지정
