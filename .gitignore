@@ -4,3 +4,4 @@ __pycache__
 blog_chat.spec
 backend/build
 backend/dist
+lagosana_conf.ini

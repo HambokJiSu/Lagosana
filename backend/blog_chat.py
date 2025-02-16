@@ -10,13 +10,13 @@ from pydantic import BaseModel
 
 # 1. 설정파일(config.ini) 읽기
 config = configparser.ConfigParser()
-config.read("config.ini", encoding="utf-8")  # 파일 인코딩을 UTF-8로 지정
+config.read("lagosana_conf.ini", encoding="utf-8")  # 파일 인코딩을 UTF-8로 지정
 
 try:
     gpt_api_key = config.get("API", "gptApiKey")
     gpt_assistant_id = config.get("API", "gptAssistantId")
 except Exception as e:
-    raise Exception("config.ini 파일을 읽는 중 오류가 발생했습니다.") from e
+    raise Exception("설정 파일을 읽는 중 오류가 발생했습니다.") from e
 
 # OpenAI 클라이언트 인스턴스 생성 (API 키 설정)
 client = OpenAI(api_key=gpt_api_key)

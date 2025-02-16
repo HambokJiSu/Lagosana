@@ -6,16 +6,21 @@
     <link href="css/lagosana.css?v=1.0.1" rel="stylesheet">
 </head>
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $customer = json_decode($_POST['customer'] ?? '[]', true);
+$config = parse_ini_file('../lagosana_conf.ini', true);
+$blogChatApiUrl = $config['FRONT']['blogChatApiUrl'];
 
-    if (empty($customer['group_name']) || $customer['group_name'] !== "VIP") {
-        // VIP가 아닌 경우, 접근 제한 메시지를 출력하고 종료
+if ($config['SERVER']['runEnv'] != "local") {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $customer = json_decode($_POST['customer'] ?? '[]', true);
+    
+        if (empty($customer['group_name']) || $customer['group_name'] !== "VIP") {
+            // VIP가 아닌 경우, 접근 제한 메시지를 출력하고 종료
+            die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
+        }
+    } else {
+        // POST 요청이 아닌 경우, 접근 제한 메시지를 출력하고 종료
         die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
     }
-} else {
-    // POST 요청이 아닌 경우, 접근 제한 메시지를 출력하고 종료
-    die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
 }
 ?>
 <body>
@@ -65,7 +70,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="chat-container" id="chatContainer"></div>
 
     <script>
-        const _API_URL = "https://ai.lagosana.com:8088/chat"; // FastAPI 서버의 URL
+        // const _API_URL = "https://ai.lagosana.com:8088/chat"; // FastAPI 서버의 URL
+        const _API_URL = "<?php echo $blogChatApiUrl; ?>"; // FastAPI 서버의 URL
         let _THREAD_ID = null; // thread_id를 저장할 변수
 
         let currentResponseArea = null;
