@@ -28,7 +28,8 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "*"
+        "http://localhost",
+        "https://ai.lagosana.com",
     ],  # 특정 도메인만 허용하려면 "*" 대신 ["http://localhost:3000"] 같은 리스트를 사용
     allow_credentials=True,
     allow_methods=["*"],  # 모든 HTTP 메서드 허용 (OPTIONS 포함)
