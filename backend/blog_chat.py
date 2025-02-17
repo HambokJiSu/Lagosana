@@ -59,6 +59,45 @@ class ChatResponse(BaseModel):
     response: str
 
 
+# 애플리케이션 시작 시 한 번만 실행되는 로거 설정
+def setup_logger_once(pLog_dir):
+    global logger  # 전역 로거 객체 사용
+
+    if "app_logger" in logging.root.manager.loggerDict:
+        return logging.getLogger("app_logger")  # 이미 설정된 로거 반환
+
+    os.makedirs(log_dir, exist_ok=True)
+
+    # 현재 날짜를 포함한 로그 파일명
+    log_filename = os.path.join(
+        pLog_dir, f"app_{datetime.now().strftime('%Y-%m-%d')}.log"
+    )
+
+    handler = TimedRotatingFileHandler(
+        log_filename, when="midnight", interval=1, backupCount=30, encoding="utf-8"
+    )
+    handler.suffix = "%Y-%m-%d"  # 일자별 로그 파일 자동 생성
+
+    # 로그 포맷 설정 (로그 생성일시 포함)
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+
+    # 스트림 핸들러 추가 (콘솔 출력)
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)  # 동일한 포맷 적용
+
+    logger = logging.getLogger("app_logger")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)  # 파일 로깅 추가
+    logger.addHandler(stream_handler)  # 터미널 출력 추가
+
+    return logger
+
+
+# 전역적으로 로거 인스턴스를 설정
+app_logger = setup_logger_once(log_dir)
+
+
 # 로그 설정
 def setup_logger(pLog_dir):
     # 로그 디렉토리 생성 (존재하지 않으면 생성)
@@ -161,9 +200,9 @@ def ask(assistant_id, thread_id, user_message):
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: Request, chat_req: ChatRequest):
-    app_logger = setup_logger(
-        log_dir
-    )  # 로거 설정 (호출 시 일자가 변경되면 신규 로그 파일 생성)
+    # app_logger = setup_logger(
+    #     log_dir
+    # )  # 로거 설정 (호출 시 일자가 변경되면 신규 로그 파일 생성)
 
     start_time = time.time()
 
