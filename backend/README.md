@@ -9,4 +9,8 @@ python -m venv .venv
 
 ##프로젝트 수행시
 # Windows
+cd backend
 .venv\Scripts\activate
+
+##실행파일 생성 방법
+pyinstaller --onefile blog_chat.py
