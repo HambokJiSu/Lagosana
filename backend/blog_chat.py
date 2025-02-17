@@ -1,5 +1,7 @@
 import time
 import logging
+from logging.handlers import TimedRotatingFileHandler
+import os
 import configparser
 from typing import Optional, List
 
@@ -7,10 +9,13 @@ from openai import OpenAI
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from datetime import datetime
 
 # 1. 설정파일(config.ini) 읽기
 config = configparser.ConfigParser()
 config.read("lagosana_conf.ini", encoding="utf-8")  # 파일 인코딩을 UTF-8로 지정
+
+log_dir = config.get("SERVER", "logDir")
 
 try:
     gpt_api_key = config.get("API", "gptApiKey")
@@ -36,10 +41,6 @@ app.add_middleware(
     allow_headers=["*"],  # 모든 헤더 허용
 )
 
-# 로그 포맷 설정 : 접속 IP, Port, 처리시간을 기록
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
 
 # 3. 대화 스레드(대화 이력)를 저장할 전역 변수
 # 각 스레드는 리스트 형태의 메시지 이력을 가짐. 메시지 형식은 OpenAI ChatCompletion API와 동일한 형식입니다.
@@ -48,6 +49,7 @@ conversation_threads = {}
 
 # 4. Pydantic 모델 정의
 class ChatRequest(BaseModel):
+    member_id: str  # 사용자 식별자 (없으면 빈 문자열)
     message: str
     thread_id: Optional[str] = None  # 기존 대화 스레드 식별자 (없으면 신규 생성)
 
@@ -55,6 +57,32 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     thread_id: str
     response: str
+
+
+# 로그 설정
+def setup_logger(pLog_dir):
+    # 로그 디렉토리 생성 (존재하지 않으면 생성)
+    os.makedirs(pLog_dir, exist_ok=True)
+
+    # 로그 포맷 설정 : 접속 IP, Port, 처리시간을 기록
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
+
+    # 현재 날짜를 포함한 로그 파일명
+    log_filename = os.path.join(
+        pLog_dir, f"app_{datetime.now().strftime('%Y-%m-%d')}.log"
+    )
+
+    log_handler = TimedRotatingFileHandler(
+        log_filename, when="midnight", interval=1, backupCount=30, encoding="utf-8"
+    )
+
+    # logger = logging.getLogger("uvicorn.access")
+    logger = logging.getLogger("app_logger")
+    logger.addHandler(log_handler)
+
+    return logger
 
 
 def build_message_history(thread_id: str, user_message: str) -> List[dict]:
@@ -133,14 +161,18 @@ def ask(assistant_id, thread_id, user_message):
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: Request, chat_req: ChatRequest):
+    app_logger = setup_logger(
+        log_dir
+    )  # 로거 설정 (호출 시 일자가 변경되면 신규 로그 파일 생성)
+
     start_time = time.time()
 
     # 사용자 접속 정보(IP, Port) 추출
     client_host = request.client.host if request.client else "unknown"
     client_port = request.client.port if request.client else "unknown"
 
-    logging.info(
-        f"Request from {client_host}:{client_port} thread_id : {chat_req.thread_id}, chat : {chat_req.message}"
+    app_logger.info(
+        f"Request from member_id: {chat_req.member_id}, client_ip: {client_host}:{client_port}, thread_id: {chat_req.thread_id}, chat: {chat_req.message}"
     )
 
     # 스레드 ID 확인 (없으면 신규 생성)
@@ -156,7 +188,7 @@ async def chat_endpoint(request: Request, chat_req: ChatRequest):
                 status_code=500, detail=f"OpenAI API 호출 중 오류 발생 : {run.status}"
             )
     except Exception as e:
-        logging.error(f"OpenAI API 호출 중 오류 발생: {e}")
+        logging.getLogger("uvicorn.access").error(f"OpenAI API 호출 중 오류 발생: {e}")
         raise HTTPException(status_code=500, detail="OpenAI API 호출 중 오류 발생")
 
     # 응답 메시지 추출 및 대화 이력에 추가 (assistant 역할)
@@ -166,8 +198,8 @@ async def chat_endpoint(request: Request, chat_req: ChatRequest):
     # )
 
     elapsed_time = time.time() - start_time
-    logging.info(
-        f"Request from {client_host}:{client_port} processed in {elapsed_time:.3f} seconds."
+    app_logger.info(
+        f"Request from member_id: {chat_req.member_id}, client_ip: {client_host}:{client_port}, thread_id: {chat_req.thread_id}, processed in: {elapsed_time:.3f}"
     )
 
     return ChatResponse(thread_id=thread_id, response=assistant_message)

@@ -21,6 +21,12 @@ if ($config['SERVER']['runEnv'] != "local") {
         // POST 요청이 아닌 경우, 접근 제한 메시지를 출력하고 종료
         die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
     }
+} else {
+    // 로컬 환경에서는 테스트를 위해 하드코딩
+    $customer = [
+        'member_id' => 'test_chan',
+        'group_name' => 'VIP'
+    ];
 }
 ?>
 <body>
@@ -70,6 +76,15 @@ if ($config['SERVER']['runEnv'] != "local") {
     <div class="chat-container" id="chatContainer"></div>
 
     <script>
+        const _LOADING_MSGS = [
+            "🌟 당신의 고객이 더 빛날 수 있도록, 라고사나 AI 솔루션이 고민하는 중!"
+            ,"🥰 고객님의 샵에 꼭 맞는 포스팅을 준비하고 있어요."
+            ,"💆‍♂ `피부는 기다림을 배신하지 않죠` AI도 최선을 다하는 중입니다!"
+            ,"🛁 피부처럼 촉촉한 답변을 준비하는 중!"
+            ,"💎 원장님만을 위한 뷰티 인사이트를 만드는 중이에요!"
+            ,"🔮라고사나 AI 솔루션이 최적의 답을 찾아내는 중!"
+        ];
+
         // const _API_URL = "https://ai.lagosana.com:8088/chat"; // FastAPI 서버의 URL
         const _API_URL = "<?php echo $blogChatApiUrl; ?>"; // FastAPI 서버의 URL
         let _THREAD_ID = null; // thread_id를 저장할 변수
@@ -81,12 +96,13 @@ if ($config['SERVER']['runEnv'] != "local") {
         function showLoading() {
             isLoading = true;
             const loadingText = document.querySelector('.loading-text');
-            let dotCount = 0;
+            let msgIdx = 0;
             document.getElementById('loadingIndicator').style.display = 'flex';
+            loadingText.textContent = _LOADING_MSGS[msgIdx];
             loadingInterval = setInterval(() => {
-                dotCount = (dotCount + 1) % 6;
-                loadingText.textContent = '답변을 생성하는 중입니다' + '.'.repeat(dotCount);
-            }, 500);
+                msgIdx = msgIdx >= _LOADING_MSGS.length - 1 ? 0 : msgIdx + 1;
+                loadingText.textContent = _LOADING_MSGS[msgIdx];
+            }, 3000);
         }
 
         function hideLoading() {
@@ -127,7 +143,10 @@ if ($config['SERVER']['runEnv'] != "local") {
         }
 
         function fn_CallAPI(pQuestion) {
+            const member_id = "<?php echo $customer['member_id'] ?? ''; ?>";
+
             const requestData = {
+                member_id: member_id,
                 message: pQuestion,
                 thread_id: _THREAD_ID // 이전 질문의 thread_id를 전달
             };
