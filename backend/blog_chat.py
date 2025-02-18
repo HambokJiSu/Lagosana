@@ -16,6 +16,7 @@ config = configparser.ConfigParser()
 config.read("lagosana_conf.ini", encoding="utf-8")  # 파일 인코딩을 UTF-8로 지정
 
 log_dir = config.get("SERVER", "logDir")
+log_backup_terms = config.get("SERVER", "logBackupTerms")
 
 try:
     gpt_api_key = config.get("API", "gptApiKey")
@@ -114,7 +115,11 @@ def setup_logger(pLog_dir):
     )
 
     log_handler = TimedRotatingFileHandler(
-        log_filename, when="midnight", interval=1, backupCount=30, encoding="utf-8"
+        log_filename,
+        when="midnight",
+        interval=1,
+        backupCount=log_backup_terms,
+        encoding="utf-8",
     )
 
     # logger = logging.getLogger("uvicorn.access")
