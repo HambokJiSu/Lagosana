@@ -5,7 +5,8 @@ import os
 from pathlib import Path
 
 # .env 파일 경로 설정
-env_path = Path(__file__).parent.parent / ".env"
+# env_path = Path(__file__).parent.parent / ".env"
+env_path = "D:/_Lagosana/backend/.env"
 load_dotenv(dotenv_path=env_path)
 
 
