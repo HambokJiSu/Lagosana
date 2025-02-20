@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from datetime import datetime
 
+from db_func import sp_set_chat_hist
+
 # 1. 설정파일(config.ini) 읽기
 config = configparser.ConfigParser()
 config.read("lagosana_conf.ini", encoding="utf-8")  # 파일 인코딩을 UTF-8로 지정
@@ -99,36 +101,6 @@ def setup_logger_once(pLog_dir):
 app_logger = setup_logger_once(log_dir)
 
 
-# 로그 설정
-def setup_logger(pLog_dir):
-    # 로그 디렉토리 생성 (존재하지 않으면 생성)
-    os.makedirs(pLog_dir, exist_ok=True)
-
-    # 로그 포맷 설정 : 접속 IP, Port, 처리시간을 기록
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
-
-    # 현재 날짜를 포함한 로그 파일명
-    log_filename = os.path.join(
-        pLog_dir, f"app_{datetime.now().strftime('%Y-%m-%d')}.log"
-    )
-
-    log_handler = TimedRotatingFileHandler(
-        log_filename,
-        when="midnight",
-        interval=1,
-        backupCount=log_backup_terms,
-        encoding="utf-8",
-    )
-
-    # logger = logging.getLogger("uvicorn.access")
-    logger = logging.getLogger("app_logger")
-    logger.addHandler(log_handler)
-
-    return logger
-
-
 def build_message_history(thread_id: str, user_message: str) -> List[dict]:
     """
     주어진 스레드에 사용자 메시지를 추가한 후 전체 이력을 반환합니다.
@@ -205,10 +177,6 @@ def ask(assistant_id, thread_id, user_message):
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: Request, chat_req: ChatRequest):
-    # app_logger = setup_logger(
-    #     log_dir
-    # )  # 로거 설정 (호출 시 일자가 변경되면 신규 로그 파일 생성)
-
     start_time = time.time()
 
     # 사용자 접속 정보(IP, Port) 추출
@@ -245,6 +213,36 @@ async def chat_endpoint(request: Request, chat_req: ChatRequest):
     app_logger.info(
         f"Request from member_id: {chat_req.member_id}, client_ip: {client_host}:{client_port}, thread_id: {chat_req.thread_id}, processed in: {elapsed_time:.3f}"
     )
+
+    result = sp_set_chat_hist(
+        {
+            "p_user_id": chat_req.member_id,
+            "p_thread_id": thread_id,
+            "p_req_res": "REQ",
+            "p_contents": chat_req.message,
+            "p_res_term": 0,
+        }
+    )
+
+    if result["success"] == False:
+        app_logger.info(
+            f"Request DB call error : {result["error"]["code"]}, msg : {result["error"]["message"]}"
+        )
+
+    result = sp_set_chat_hist(
+        {
+            "p_user_id": chat_req.member_id,
+            "p_thread_id": thread_id,
+            "p_req_res": "RES",
+            "p_contents": assistant_message,
+            "p_res_term": elapsed_time,
+        }
+    )
+
+    if result["success"] == False:
+        app_logger.info(
+            f"Response DB call error : {result["error"]["code"]}, msg : {result["error"]["message"]}"
+        )
 
     return ChatResponse(thread_id=thread_id, response=assistant_message)
 
