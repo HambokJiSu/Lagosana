@@ -1,286 +1,86 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from openai import OpenAI
-import asyncio
-import json
+import logging
+from logging.handlers import TimedRotatingFileHandler
+import os
 from datetime import datetime
-import time
-from concurrent.futures import ThreadPoolExecutor
 
-from configparser import ConfigParser
+from core.config import settings
+from routes import chat_routes, chat_hist_routes
 
-#   기존 웹소켓 방식 (현재 미사용)
+# 애플리케이션 시작 시 한 번만 실행되는 로거 설정 함수
+def setup_logger_once(pLog_dir, pLog_backup_terms):
+    global logger  # 전역 로거 객체 사용
 
-#   ini 값 호출
-config = ConfigParser()
-config.read("config.ini", encoding="utf-8")  # 파일 인코딩을 UTF-8로 지정
+    if "app_logger" in logging.root.manager.loggerDict:
+        return logging.getLogger("app_logger")  # 이미 설정된 로거 반환
 
-app = FastAPI()
+    os.makedirs(pLog_dir, exist_ok=True)
 
-# CORS 설정
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    # 현재 날짜를 포함한 로그 파일명
+    log_filename = os.path.join(
+        pLog_dir, f"app_{datetime.now().strftime('%Y-%m-%d')}.log"
+    )
+
+    handler = TimedRotatingFileHandler(
+        log_filename, when="midnight", interval=1, backupCount=pLog_backup_terms, encoding="utf-8"
+    )
+    handler.suffix = "%Y-%m-%d"  # 일자별 로그 파일 자동 생성
+
+    # 로그 포맷 설정 (로그 생성일시 포함)
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+
+    # 스트림 핸들러 추가 (콘솔 출력)
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)  # 동일한 포맷 적용
+
+    logger = logging.getLogger("app_logger")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)  # 파일 로깅 추가
+    logger.addHandler(stream_handler)  # 터미널 출력 추가
+
+    return logger
+
+# 전역적으로 로거 인스턴스를 설정
+app_logger = setup_logger_once(settings.SERVER_LOG_DIR, settings.SERVER_LOG_BACKUP_TERMS)
+
+# FastAPI 앱 생성 및 로깅 설정
+app = FastAPI(
+    title="Lagosana Chat API",
+    debug=settings.SERVER_DEBUG,
 )
 
-# OpenAI 클라이언트 설정
-client = OpenAI(api_key=config["API"]["gptApiKey"])
+app.include_router(chat_routes.router)      #  블로그 작성 도움 API 라우터 추가
+app.include_router(chat_hist_routes.router) #  블로그 작성 통계 API 라우터 추가
 
-ASSISTANT_ID = config["API"]["gptAssistantId"]
+chat_routes.logger = app_logger
+chat_hist_routes.logger = app_logger
 
-# 상수 정의
-MAX_RETRY_ATTEMPTS = 3
-RETRY_DELAY = 2  # 초
-RUN_TIMEOUT = 30  # 초
-POLL_INTERVAL = 0.5  # 초
-
-# 스레드 풀 생성
-executor = ThreadPoolExecutor(max_workers=5)
-
-
-# OpenAI API 호출을 위한 별도 함수
-def call_openai_api(thread_id: str, run_id: str):
-    return client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
-
-
-async def wait_for_run_completion(thread_id: str, run_id: str, websocket: WebSocket):
-    """실행 완료를 기다리는 함수"""
-    start_time = datetime.now()
-    retry_count = 0
-    current_poll_interval = 1  # 고정된 폴링 간격
-
-    while True:
-        try:
-            run = await asyncio.get_event_loop().run_in_executor(
-                executor, call_openai_api, thread_id, run_id
-            )
-
-            if run.status == "completed":
-                return True, run
-            elif run.status in ["failed", "expired", "cancelled"]:
-                return False, f"실행이 {run.status} 상태가 되었습니다."
-
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            if elapsed_time > RUN_TIMEOUT:
-                return False, "시간 초과"
-
-            await asyncio.sleep(current_poll_interval)  # 고정된 폴링 간격
-
-        except Exception as e:
-            retry_count += 1
-            if retry_count >= MAX_RETRY_ATTEMPTS:
-                return False, f"API 호출 중 오류가 발생했습니다: {str(e)}"
-            await asyncio.sleep(RETRY_DELAY)  # 재시도 시 대기
-
-
-# 활성 연결 관리를 위한 클래스 추가
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: dict = {}
-
-    async def connect(self, websocket: WebSocket, client_id: str):
-        await websocket.accept()
-        self.active_connections[client_id] = websocket
-
-    def disconnect(self, client_id: str):
-        if client_id in self.active_connections:
-            del self.active_connections[client_id]
-
-    async def send_message(self, message: str, client_id: str):
-        if client_id in self.active_connections:
-            try:
-                await self.active_connections[client_id].send_text(message)
-            except RuntimeError:
-                # 연결이 이미 닫힌 경우 무시
-                self.disconnect(client_id)
-
-
-manager = ConnectionManager()
-
-
-@app.websocket("/chat")
-async def websocket_endpoint(websocket: WebSocket):
-    # 클라이언트 IP와 포트 정보 추출
-    client_host = websocket.client.host
-    client_port = websocket.client.port
-    client_id = str(id(websocket))
-
-    print(
-        f"새로운 연결: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})"
-    )
-    await manager.connect(websocket, client_id)
-
-    try:
-        thread = await asyncio.get_event_loop().run_in_executor(
-            executor, client.beta.threads.create
-        )
-
-        while True:
-            try:
-                data = await websocket.receive_text()
-                start_time = time.time()
-
-                print(
-                    f"메시지 수신 [{client_host}:{client_port}] ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}): {data}"
-                )
-
-                if data == "new_session":
-                    thread = await asyncio.get_event_loop().run_in_executor(
-                        executor, client.beta.threads.create
-                    )
-                    await manager.send_message(
-                        json.dumps(
-                            {
-                                "type": "session",
-                                "message": "새로운 세션이 시작되었습니다.",
-                            }
-                        ),
-                        client_id,
-                    )
-                    continue
-
-                # 메시지 생성을 비동기로 처리
-                try:
-                    message = await asyncio.get_event_loop().run_in_executor(
-                        executor,
-                        lambda: client.beta.threads.messages.create(
-                            thread_id=thread.id, role="user", content=data
-                        ),
-                    )
-                except Exception as e:
-                    await manager.send_message(
-                        json.dumps(
-                            {
-                                "type": "error",
-                                "message": "메시지 생성 중 오류가 발생했습니다.",
-                            }
-                        ),
-                        client_id,
-                    )
-                    continue
-
-                # 실행 생성을 비동기로 처리
-                try:
-                    run = await asyncio.get_event_loop().run_in_executor(
-                        executor,
-                        lambda: client.beta.threads.runs.create(
-                            thread_id=thread.id, assistant_id=ASSISTANT_ID
-                        ),
-                    )
-                except Exception as e:
-                    print("Exception! ==> " + str(e))
-                    await manager.send_message(
-                        json.dumps(
-                            {
-                                "type": "error",
-                                "message": "실행 생성 중 오류가 발생했습니다: "
-                                + str(e),
-                            }
-                        ),
-                        client_id,
-                    )
-                    continue
-
-                # 실행 완료 대기
-                success, result = await wait_for_run_completion(
-                    thread.id, run.id, websocket
-                )
-
-                if not success:
-                    await manager.send_message(
-                        json.dumps({"type": "error", "message": result}), client_id
-                    )
-                    continue
-
-                try:
-                    # messages = client.beta.threads.messages.list(thread_id=thread.id)
-                    messages = await asyncio.get_event_loop().run_in_executor(
-                        executor,
-                        lambda: client.beta.threads.messages.list(thread_id=thread.id),
-                    )
-                    assistant_message = messages.data[0].content[0].text.value
-
-                    end_time = time.time()
-                    elapsed_time = end_time - start_time
-                    print(
-                        f"응답 완료 [{client_host}:{client_port}] ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) - 소요시간: {elapsed_time:.2f}초"
-                    )
-
-                    lines = assistant_message.splitlines(True)
-                    for line in lines:
-                        await manager.send_message(
-                            json.dumps({"type": "token", "message": line}), client_id
-                        )
-                        await asyncio.sleep(0.1)
-
-                    await manager.send_message(
-                        json.dumps({"type": "end", "message": ""}), client_id
-                    )
-
-                except Exception as e:
-                    await manager.send_message(
-                        json.dumps(
-                            {
-                                "type": "error",
-                                "message": "응답 처리 중 오류가 발생했습니다.",
-                            }
-                        ),
-                        client_id,
-                    )
-
-            except WebSocketDisconnect:
-                print(
-                    f"연결 종료: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})"
-                )
-                manager.disconnect(client_id)
-                break
-            except Exception as e:
-                try:
-                    await manager.send_message(
-                        json.dumps(
-                            {
-                                "type": "error",
-                                "message": f"처리 중 오류가 발생했습니다: {str(e)}",
-                            }
-                        ),
-                        client_id,
-                    )
-                except:
-                    break
-
-    except WebSocketDisconnect:
-        print(
-            f"연결 종료: {client_host}:{client_port} ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})"
-        )
-        manager.disconnect(client_id)
-    except Exception as e:
-        try:
-            await manager.send_message(
-                json.dumps({"type": "error", "message": str(e)}), client_id
-            )
-        except:
-            pass
-    finally:
-        manager.disconnect(client_id)
-
+# CORS 미들웨어 추가
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost",
+        "https://ai.lagosana.com",
+    ],  # 특정 도메인만 허용하려면 "*" 대신 ["http://localhost:3000"] 같은 리스트를 사용
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 HTTP 메서드 허용 (OPTIONS 포함)
+    allow_headers=["*"],  # 모든 헤더 허용
+)
 
 if __name__ == "__main__":
     import uvicorn
 
-    # PHP 페이지 및 Python 모두 동일 서버에서 수행되어 SSL이 아닌 일반 uvicorn 실행하며 localhost만 접근할 수 있게 설정
-    # uvicorn.run(app, host="127.0.0.1", port=8088)
-
-    if config["SERVER"]["runEnv"] == "prod":  # 운영환경에서는 SSL 적용
+    if settings.SERVER_RUN_ENV == "prod":  # 운영환경에서는 SSL 적용
         uvicorn.run(
             app,
             host="0.0.0.0",
             port=8088,
-            ssl_certfile=config["CERTS"]["sslCertfile"],
-            ssl_keyfile=config["CERTS"]["sslKeyfile"],
-            ssl_keyfile_password=config["CERTS"]["sslKeyfilePass"],
+            workers=1,
+            ssl_certfile=settings.CERTS_SSL_CERTFILE,
+            ssl_keyfile=settings.CERTS_SSL_KEYFILE,
+            ssl_keyfile_password=settings.CERTS_SSL_KEYFILE_PASS,
         )
     else:  # 개발환경에서는 SSL 미적용
         uvicorn.run(app, host="0.0.0.0", port=8088)

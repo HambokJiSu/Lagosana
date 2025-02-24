@@ -7,3 +7,5 @@ backend/dist
 lagosana_conf.ini
 blog_chat.exe
 .venv
+main.exe
+backend/main.spec
