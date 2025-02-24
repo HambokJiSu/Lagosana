@@ -13,7 +13,7 @@ cd backend
 .venv\Scripts\activate
 
 # 실행파일 생성 방법
-pyinstaller --onefile blog_chat.py
+pyinstaller --onefile main.py
 
 ## MySQL 포함 후 실행파일 생성 방법
-poetry run pyinstaller --onefile --paths=$(poetry env info --path)/lib/site-packages --collect-submodules=sqlmodel blog_chat.py
+poetry run pyinstaller --onefile --paths=$(poetry env info --path)/lib/site-packages --collect-submodules=sqlmodel main.py
