@@ -9,3 +9,4 @@ blog_chat.exe
 .venv
 main.exe
 backend/main.spec
+.env
