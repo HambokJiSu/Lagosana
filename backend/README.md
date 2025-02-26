@@ -12,7 +12,7 @@ python -m venv .venv
 cd backend
 .venv\Scripts\activate
 
-# 실행파일 생성 방법
+# 구) 실행파일 생성 방법
 pyinstaller --onefile main.py
 
 ## MySQL 포함 후 실행파일 생성 방법
