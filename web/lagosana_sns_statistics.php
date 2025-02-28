@@ -34,7 +34,7 @@
             var url = _API_URL + "/?start_date=" + startDate + "&end_date=" + endDate;
             
             // 로딩 표시
-            _table.setData([]);
+            // _table.setData([]);
             // _table.setLoading("데이터를 불러오는 중...");
 
             fetch(url)
@@ -52,7 +52,7 @@
                     alert('데이터 조회 중 오류가 발생했습니다.');
                 })
                 .finally(function () {
-                    _table.clearLoading();
+                    // _table.clearLoading();
                 });
         }
 
