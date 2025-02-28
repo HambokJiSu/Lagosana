@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html>
+<?php
+    $config = parse_ini_file('../lagosana_conf.ini', true);
+    $aiStatisticsUrl = $config['FRONT']['aiStatisticsUrl'];
+?>
 <head>
     <meta charset="UTF-8">
     <title>라고사나 AI 통계</title>
@@ -12,6 +16,8 @@
 
         // 기간별 통계 데이터 조회
         function getStatistics() {
+            const _API_URL = "<?php echo $aiStatisticsUrl; ?>"; // FastAPI 서버의 URL
+
             var startDate = document.getElementById("startDate").value;
             var endDate = document.getElementById("endDate").value;
 
@@ -25,7 +31,7 @@
                 return;
             }
 
-            var url = "http://localhost:8088/chat-hist/?start_date=" + startDate + "&end_date=" + endDate;
+            var url = _API_URL + "/?start_date=" + startDate + "&end_date=" + endDate;
             
             // 로딩 표시
             _table.setData([]);
