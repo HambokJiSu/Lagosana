@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Blog Content Generator</title>
-    <link href="css/lagosana.css?v=1.0.1" rel="stylesheet">
+    <link href="css/lagosana.css?v=1.0.2" rel="stylesheet">
 </head>
 <?php
 $config = parse_ini_file('../lagosana_conf.ini', true);

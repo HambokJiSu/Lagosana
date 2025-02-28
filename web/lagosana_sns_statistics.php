@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>라고사나 AI 통계</title>
-    <link href="css/lagosana.css?v=1.0.2" rel="stylesheet">
+    <link href="css/lagosana.css?v=1.0.24" rel="stylesheet">
     <link rel='stylesheet' href='/assets/tabulator/tabulator.min.css'>
     <script type='text/javascript' src='/assets/tabulator/tabulator.min.js'></script>
+    <script type='text/javascript' src='/assets/util/dayjs.min.js'></script>
     <script>
         let _table = null;
 
@@ -79,26 +80,24 @@
             });
 
             // 초기 날짜 설정
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            document.getElementById("startDate").value = dayjs().add(-1, 'month').format('YYYY-MM-DD');
+            document.getElementById("endDate").value = dayjs().format('YYYY-MM-DD');
 
-            document.getElementById("startDate").value = firstDay.toISOString().split('T')[0];
-            document.getElementById("endDate").value = lastDay.toISOString().split('T')[0];
+            getStatistics()
         });
     </script>
 </head>
-<body>
+<body class="statistics-body">
     <div class="statistics-container">
         <div class="statistics-header">
-            <h1>라고사나 AI 통계</h1>
+            <h1>Lagosana AI Solution Usage Status </h1>
         </div>
         
         <div class="search-container">
             <div class="search-form">
-                <label for="startDate">시작일</label>
+                <label for="startDate">From</label>
                 <input type="date" id="startDate" />
-                <label for="endDate">종료일</label>
+                <label for="endDate">To</label>
                 <input type="date" id="endDate" />
                 <button class="search-button" onclick="getStatistics()">조회</button>
             </div>

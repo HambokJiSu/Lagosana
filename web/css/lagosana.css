@@ -3,6 +3,12 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
 }
+
+.statistics-body {
+    background-color: #333;
+    color: #ffffff
+}
+
 .header-container {
     max-width: 800px;
     margin: 0 auto;
@@ -440,16 +446,15 @@ body {
 }
 
 .statistics-header h1 {
-    color: #1a1a1a;
+    color: #ffffff;
     font-size: 28px;
     margin-bottom: 20px;
 }
 
 .search-container {
     margin-top: 15px;
-    background: #ffffff;
+    background: #333;
     padding: 24px;
-    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     margin-bottom: 24px;
 }
@@ -462,7 +467,7 @@ body {
 }
 
 .search-form label {
-    color: #495057;
+    color: #ffffff
     font-weight: 500;
 }
 
@@ -488,28 +493,26 @@ body {
 }
 
 /* Tabulator 커스텀 스타일 */
-.tabulator {
+ .tabulator {
     border: none;
     background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     font-family: Arial, sans-serif;
 }
 
 .tabulator-header {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
+    background-color: black;
+    border-bottom: 2px solid black;
 }
 
 .tabulator-header .tabulator-col {
-    background-color: transparent;
+    background-color: black;
     border-right: none;
     padding: 12px;
 }
 
 .tabulator-header .tabulator-col-title {
     font-weight: 600;
-    color: #495057;
+    color: white;
 }
 
 .tabulator-row {
@@ -526,4 +529,54 @@ body {
 
 .tabulator-row:hover {
     background-color: #e9ecef;
+} 
+
+/* 혜미추가 */
+
+/*Theme the Tabulator element*/
+#divTable{
+    background-color:#ccc;
+    border: 1px solid #333;
+    border-radius: 10px;
 }
+
+/*Theme the header*/
+#divTable .tabulator-header {
+    background-color:#333;
+    color:#fff;
+}
+
+/*Allow column header names to wrap lines*/
+#divTable .tabulator-header .tabulator-col {
+    background-color: #1E1E1E;
+    color: white;
+    text-align:center;
+}
+#divTable .tabulator-header .tabulator-col-row-handle {
+    white-space: normal;
+}
+
+/*Color the table rows*/
+#divTable .tabulator-tableholder .tabulator-table .tabulator-row{
+    color:#fff;
+    background-color: #666;
+}
+
+/*Color even rows*/
+    #divTable .tabulator-tableholder .tabulator-table .tabulator-row:nth-child(even) {
+    background-color: #444;
+}
+
+#divTable .tabulator-footer {
+    background-color: #1E1E1E;
+    color:white;
+}
+
+#divTable .tabulator-footer .tabulator-paginator {
+    color:white;
+}
+
+#divTable .tabulator {
+    text-align: center;
+}
+
