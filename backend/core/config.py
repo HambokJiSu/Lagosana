@@ -1,13 +1,20 @@
 from pydantic import MySQLDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
-import os
 from pathlib import Path
+import sys
+
+# PyInstaller 실행 환경인지 확인
+if getattr(sys, 'frozen', False):
+    env_path = ".env"
+else:
+    env_path = Path(__file__).parent.parent / ".env"
 
 # .env 파일 경로 설정
 # env_path = Path(__file__).parent.parent / ".env"
 # env_path = "D:/_Lagosana/backend/.env"
-env_path = ".env"
+# env_path = Path(__file__).parent / ".env"
+print('env_path:', env_path)
 load_dotenv(dotenv_path=env_path)
 
 class Settings(BaseSettings):
@@ -47,6 +54,7 @@ class Settings(BaseSettings):
             host=self.MYSQL_SERVER,
             port=self.MYSQL_PORT,
             path=self.MYSQL_DB,
+            query="charset=utf8mb4"  # charset 추가
         )
 
     @property

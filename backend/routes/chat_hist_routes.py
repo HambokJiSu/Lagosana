@@ -33,7 +33,7 @@ async def get_activity_logs(
                 SELECT	DATE(A.create_dtm) 				AS create_dt	--	사용일자
                         ,A.user_id										--	사용자ID
                         ,COUNT(DISTINCT A.thread_id) 	AS thread_cnt	--	사용건수
-                        ,COUNT(1)						AS api_user_cnt	--	API 호출건수
+                        ,SUM(IF(req_res = 'RES', 1, 0))	AS api_user_cnt	--	API 사용건수
                         ,SUM(A.res_term)				AS res_term_sum	--	응답 총 소요 시간(초)
                 FROM	tb_chat_hist AS A
                 WHERE	A.create_dtm >= STR_TO_DATE(:start_date, '%Y-%m-%d')
