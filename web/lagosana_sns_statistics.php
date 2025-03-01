@@ -37,6 +37,8 @@
             // _table.setData([]);
             // _table.setLoading("데이터를 불러오는 중...");
 
+            _table.alert("Loding");
+
             fetch(url)
                 .then(function (response) {
                     if (!response.ok) {
@@ -52,7 +54,7 @@
                     alert('데이터 조회 중 오류가 발생했습니다.');
                 })
                 .finally(function () {
-                    // _table.clearLoading();
+                    _table.clearAlert();
                 });
         }
 
@@ -74,14 +76,14 @@
                 layout: "fitColumns",
                 placeholder: "데이터가 없습니다.",
                 columns: [
-                    { title: "날짜", field: "create_dt", width: 120, formatter: formatDate },
-                    { title: "사용자 ID", field: "user_id", width: 150 },
-                    { title: "사용 건수", field: "thread_cnt", width: 120, formatter: formatNumber, hozAlign: "right" },
-                    { title: "API 사용 건수", field: "api_user_cnt", width: 150, formatter: formatNumber, hozAlign: "right" },
-                    { title: "응답 소요시간(초)", field: "res_term_sum", formatter: formatNumber, hozAlign: "right" },
+                    { title: "순위", field: "rnk", width: 100, hozAlign: "center"},
+                    { title: "사용자 ID", field: "user_id", width: 200},
+                    { title: "포스팅 건수<br/>(기간 합산)", field: "posting_cnt", width: 200, formatter: formatNumber, hozAlign: "right" },
+                    { title: "API 사용 건수<br/>(기간 합산)", field: "api_use_cnt", width: 200, formatter: formatNumber, hozAlign: "right" },
+                    { title: "응답 소요시간<br/>(평균, 초)", field: "posting_avg", formatter: formatNumber, hozAlign: "right" },
                 ],
                 pagination: true,
-                paginationSize: 10,
+                paginationSize: 20,
                 paginationSizeSelector: [10, 20, 50, 100],
             });
 
@@ -110,6 +112,10 @@
         </div>
 
         <div id="divTable"></div>
-    </div>
+
+        <div class="statistics-footer">
+            <p>※ API사용 건수란, 하나의 포스팅 당 몇 건의 대화를 주고 받았는지에 대한 수치입니다.</p>
+            <p>※ API사용 건수가 1건, 즉 대화 시작만 하고 주고받지 않은 경우에는 통계에서 제하였습니다.</p>
+        </div>
 </body>
 </html>

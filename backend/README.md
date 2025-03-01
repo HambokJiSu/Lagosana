@@ -17,3 +17,8 @@ pyinstaller --onefile main.py
 
 ## MySQL 포함 후 실행파일 생성 방법
 poetry run pyinstaller --onefile --paths=$(poetry env info --path)/lib/site-packages --collect-submodules=sqlmodel main.py
+
+## 일괄
+cd backend
+.venv\Scripts\activate
+poetry run pyinstaller --onefile --paths=$(poetry env info --path)/lib/site-packages --collect-submodules=sqlmodel main.py
