@@ -76,6 +76,10 @@ if ($config['SERVER']['runEnv'] != "local") {
     <div class="chat-container" id="chatContainer"></div>
 
     <script>
+        const additional_information = "<?php echo $customer['additional_information'] ?? ''; ?>";
+        console.log("additional_information");
+        console.log(additional_information);
+
         const _LOADING_MSGS = [
             "🌟 당신의 고객이 더 빛날 수 있도록, 라고사나 AI 솔루션이 고민하는 중!"
             ,"🥰 고객님의 샵에 꼭 맞는 포스팅을 준비하고 있어요."
@@ -144,7 +148,7 @@ if ($config['SERVER']['runEnv'] != "local") {
 
         function fn_CallAPI(pQuestion) {
             const member_id = "<?php echo $customer['member_id'] ?? ''; ?>";
-
+            
             const requestData = {
                 member_id: member_id,
                 message: pQuestion,
