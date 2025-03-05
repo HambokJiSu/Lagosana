@@ -76,9 +76,6 @@ if ($config['SERVER']['runEnv'] != "local") {
     <div class="chat-container" id="chatContainer"></div>
 
     <script>
-        const cust = "<?php echo $customer ?? ''; ?>";
-        console.log(cust);
-
         const _LOADING_MSGS = [
             "🌟 당신의 고객이 더 빛날 수 있도록, 라고사나 AI 솔루션이 고민하는 중!"
             ,"🥰 고객님의 샵에 꼭 맞는 포스팅을 준비하고 있어요."
