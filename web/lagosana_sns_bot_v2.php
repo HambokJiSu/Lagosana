@@ -80,10 +80,6 @@ if ($config['SERVER']['runEnv'] != "local") {
         const add_info_value_2 = "<?php echo $customer['additional_information'][1]['value'] ?? ''; ?>";
         const add_info_value_3 = "<?php echo $customer['additional_information'][2]['value'] ?? ''; ?>";
 
-        console.log("add_info_value_1 : " + add_info_value_1);
-        console.log("add_info_value_2 : " + add_info_value_2);
-        console.log("add_info_value_3 : " + add_info_value_3);
-
         const _LOADING_MSGS = [
             "🌟 당신의 고객이 더 빛날 수 있도록, 라고사나 AI 솔루션이 고민하는 중!"
             ,"🥰 고객님의 샵에 꼭 맞는 포스팅을 준비하고 있어요."
