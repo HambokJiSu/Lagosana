@@ -1,0 +1,166 @@
+.desktop-1
+{
+position:absolute;
+background-color:#ffffff;
+height:1024px;
+width:1440px;
+padding:0px;
+display:flex;
+flex-direction:column;
+flex-wrap:nowrap;
+align-items:center;
+justify-content:center;
+top: 45%;
+left: 50%;
+transform: translate(-50%, -50%);
+}
+.lagosana_ai_solution
+{
+height:125px;
+width:900px;
+align-self:auto;
+position:relative;
+display:flex;
+flex-direction:column;
+gap:5px;
+align-items: center;
+}
+.lagosana
+{
+color:#c91018;
+text-align:center;
+vertical-align:text-middle;
+font-size:55px;
+font-family: 'Kaisei Tokumin', sans-serif;
+width:340px;
+height:60px;
+position:relative;
+line-height:auto;
+border-style:hidden;
+outline:none;
+}
+.aisolution
+{
+color:#000000;
+text-align:center;
+vertical-align:text-middle;
+font-size:47px;
+font-family: 'Kaisei Tokumin', sans-serif;
+width:340px;
+height:60px;
+position:relative;
+line-height:auto;
+border-style:hidden;
+outline:none;
+}
+.texts
+{
+height:100px;
+width:900px;
+align-self:auto;
+position:relative;
+display:flex;
+flex-direction:column;
+align-items: center;
+justify-content: center;
+top: 7%;
+}
+.text
+{
+color:#636363;
+text-align:center;
+font-family: 'Gowun Batang', sans-serif;
+font-weight: bold;
+vertical-align:text-middle;
+font-size:18px;
+width:560px;
+height:100px;
+position:relative;
+}
+.swiper_container
+{
+height:400px;
+width:900px;
+align-self:center;
+position:relative;
+display:flex;
+flex-direction:column;
+gap:30px;
+top: 15%;
+}
+.cards
+{
+height:130px;
+width:880px;
+padding:0px;
+display:flex;
+flex-direction:row;
+flex-wrap:nowrap;
+justify-content:center;
+align-items:center;
+gap:60px;
+position:relative;
+}
+.chat_card
+{
+height:115px;
+width:232px;
+filter:drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
+align-self:flex-start;
+position:relative;
+border-radius:20px;
+display:flex;
+flex-direction:column;
+gap:12px;
+background-color: white; /* 카드 배경색 추가 */
+border: 0.5px solid #C91018; /* 빨간색 테두리 추가 */
+padding-left: 10px;
+padding-top: 15px;
+transition: all 0.3s ease-in-out; /* 부드러운 애니메이션 효과 */
+}
+.card_contents
+{
+height:110px;
+width:200px;
+padding:10px;
+display:flex;
+flex-direction:column;
+gap:10px;
+position:relative;
+}
+.card_name_icon
+{
+height:23px;
+width:190px;
+font-weight: bold;
+display:flex;
+flex-direction:row;
+justify-content:space-between;
+align-items:flex-start;
+position:relative;
+}
+
+.edit-marker
+{
+background-color:#ffffff;
+height:23px;
+width:23px;
+align-self:flex-start;
+position:relative;
+padding:0px;
+}
+
+.card_description
+{
+color:#000000;
+text-align:left;
+vertical-align:text-bottom;
+font-size:14px;
+font-family:Inter;
+line-height:20px;
+border-style:hidden;
+outline:none;
+position:relative;
+width:172px;
+}
+
