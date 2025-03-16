@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Blog Content Generator</title>
-    <link href="css/chatbot_menu.css?v=1.0.3" rel="stylesheet">
+    <link href="css/chatbot_menu.css?v=1.0.5" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Korean:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
