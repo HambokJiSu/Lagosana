@@ -3,30 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Blog Content Generator</title>
-    <link href="css/lagosana.css?v=1.0.2" rel="stylesheet">
+    <link href="css/lagosana.css?v=1.0.1" rel="stylesheet">
 </head>
 <?php
-$config = parse_ini_file('../lagosana_conf.ini', true);
-$blogChatApiUrl = $config['FRONT']['blogChatApiUrl'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $customer = json_decode($_POST['customer'] ?? '[]', true);
 
-if ($config['SERVER']['runEnv'] != "local") {
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $customer = json_decode($_POST['customer'] ?? '[]', true);
-    
-        if (empty($customer['group_name']) || $customer['group_name'] !== "VIP") {
-            // VIP가 아닌 경우, 접근 제한 메시지를 출력하고 종료
-            die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
-        }
-    } else {
-        // POST 요청이 아닌 경우, 접근 제한 메시지를 출력하고 종료
+    if (empty($customer['group_name']) || $customer['group_name'] !== "VIP") {
+        // VIP가 아닌 경우, 접근 제한 메시지를 출력하고 종료
         die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
     }
 } else {
-    // 로컬 환경에서는 테스트를 위해 하드코딩
-    $customer = [
-        'member_id' => 'test_chan',
-        'group_name' => 'VIP'
-    ];
+    // POST 요청이 아닌 경우, 접근 제한 메시지를 출력하고 종료
+    die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
 }
 ?>
 <body>
@@ -57,7 +46,6 @@ if ($config['SERVER']['runEnv'] != "local") {
         </div>
         <button class="btn btn-primary w-100 mt-3" onclick="startChat()">질문 시작</button>
     </div>
-    
     <div class="chat-container" style="display: flex;">
         <div class="chat-set">
             <div class="response-wrapper">
@@ -72,41 +60,41 @@ if ($config['SERVER']['runEnv'] != "local") {
             </div>
         </div>
     </div>
-    
-    <div class="chat-container" id="chatContainer"></div>
+    <div class="chat-container" id="chatContainer">
+    </div>
 
     <script>
-        const add_info_value_1 = "<?php echo $customer['additional_information'][0]['value'] ?? ''; ?>";
-        const add_info_value_2 = "<?php echo $customer['additional_information'][1]['value'] ?? ''; ?>";
-        const add_info_value_3 = "<?php echo $customer['additional_information'][2]['value'] ?? ''; ?>";
+        // const params = new URLSearchParams(window.location.search);
+        // const runEnv = params.get("runEnv");
 
-        const _LOADING_MSGS = [
-            "🌟 당신의 고객이 더 빛날 수 있도록, 라고사나 AI 솔루션이 고민하는 중!"
-            ,"🥰 고객님의 샵에 꼭 맞는 포스팅을 준비하고 있어요."
-            ,"💆‍♂ `피부는 기다림을 배신하지 않죠` AI도 최선을 다하는 중입니다!"
-            ,"🛁 피부처럼 촉촉한 답변을 준비하는 중!"
-            ,"💎 원장님만을 위한 뷰티 인사이트를 만드는 중이에요!"
-            ,"🔮라고사나 AI 솔루션이 최적의 답을 찾아내는 중!"
-        ];
+        // let ws;
+        // if (runEnv == 'local') {
+        //     ws = new WebSocket('ws://localhost:8088/chat');
+        // } else {
+        //     ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
+        // }
 
-        // const _API_URL = "https://ai.lagosana.com:8088/chat"; // FastAPI 서버의 URL
-        const _API_URL = "<?php echo $blogChatApiUrl; ?>"; // FastAPI 서버의 URL
-        let _THREAD_ID = null; // thread_id를 저장할 변수
+        let ws = new WebSocket('wss://ai.lagosana.com:8088/chat');
+        // let ws = new WebSocket('ws://127.0.0.1:8088/chat');
 
         let currentResponseArea = null;
         let selectedSNS = null;
         let isLoading = false;
+        let loadingInterval;
 
         function showLoading() {
             isLoading = true;
+            
             const loadingText = document.querySelector('.loading-text');
-            let msgIdx = 0;
-            document.getElementById('loadingIndicator').style.display = 'flex';
-            loadingText.textContent = _LOADING_MSGS[msgIdx];
-            loadingInterval = setInterval(() => {
-                msgIdx = msgIdx >= _LOADING_MSGS.length - 1 ? 0 : msgIdx + 1;
-                loadingText.textContent = _LOADING_MSGS[msgIdx];
-            }, 3000);
+            let dotCount = 0;
+            
+            if (ws.readyState === WebSocket.OPEN) {
+                document.getElementById('loadingIndicator').style.display = 'flex';
+                loadingInterval = setInterval(() => {
+                    dotCount = (dotCount + 1) % 6;
+                    loadingText.textContent = '답변을 생성하는 중입니다' + '.'.repeat(dotCount);
+                }, 500);
+            }
         }
 
         function hideLoading() {
@@ -138,43 +126,26 @@ if ($config['SERVER']['runEnv'] != "local") {
             });
 
             document.querySelector('.btn-primary').disabled = true;
-
-            // 질문 시작 시 로딩 표시
+            
             showLoading();
-
-            // AJAX 요청을 통해 API 호출
-            fn_CallAPI(selectedSNS);
+            ws.send(selectedSNS);
         }
 
-        function fn_CallAPI(pQuestion) {
-            const member_id = "<?php echo $customer['member_id'] ?? ''; ?>";
+        ws.onopen = function(event) {
+            console.log('WebSocket 연결됨');
+        };
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
             
-            const requestData = {
-                member_id: member_id,
-                message: pQuestion,
-                thread_id: _THREAD_ID // 이전 질문의 thread_id를 전달
-            };
-
-            fetch(_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData),
-                mode: 'cors' // CORS 요청을 명확히 지정
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+            if (data.type === 'token') {
+                hideLoading();
+                if (currentResponseArea) {
+                    currentResponseArea.textContent += data.message;
+                    currentResponseArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 }
-                return response.json();
-            })
-            .then(data => {
-                // 응답 처리
-                _THREAD_ID = data.thread_id; // 새로운 thread_id 저장
-                currentResponseArea.textContent = data.response; // 응답 내용 표시
-                hideLoading(); // 로딩 종료
-
+            } else if (data.type === 'end') {
+                hideLoading();
                 if (currentResponseArea && currentResponseArea.textContent.trim()) {
                     const copyButton = currentResponseArea.previousElementSibling;
                     copyButton.style.display = 'flex';
@@ -185,13 +156,11 @@ if ($config['SERVER']['runEnv'] != "local") {
                 } else {
                     addNewChatSet();
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                hideLoading(); // 로딩 종료
-                alert('오류가 발생했습니다. 다시 시도해주세요.');
-            });
-        }
+            } else if (data.type === 'error') {
+                hideLoading();
+                alert(data.message);
+            }
+        };
 
         function handleKeyPress(event, element) {
             if (event.key === 'Enter' && !event.shiftKey) {
@@ -204,7 +173,7 @@ if ($config['SERVER']['runEnv'] != "local") {
                     element.contentEditable = false;
                     currentResponseArea = element.closest('.chat-set').querySelector('.response-container');
                     showLoading();
-                    fn_CallAPI(question);
+                    ws.send(question);
                 }
             }
         }
@@ -238,10 +207,6 @@ if ($config['SERVER']['runEnv'] != "local") {
             chatSet.querySelector('.question-content').focus();
         }
 
-        function startNewSession() {
-            location.reload(); // 새 질문 시작 시 페이지 새로고침
-        }
-
         function copyToClipboard(button) {
             const responseContainer = button.nextElementSibling;
             const textToCopy = responseContainer.textContent;
@@ -256,6 +221,14 @@ if ($config['SERVER']['runEnv'] != "local") {
                 }, 1500);
             });
         }
+
+        function startNewSession() {
+            location.reload();
+        }
+
+        window.onbeforeunload = function() {
+            ws.close();
+        };
     </script>
 </body>
 </html> 
