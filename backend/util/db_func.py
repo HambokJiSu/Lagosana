@@ -1,5 +1,6 @@
 from sqlalchemy.sql import text
 from typing import Dict, Any, List, Optional
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
 
 from core.db import get_connection
 from util.standard_response import standard_response
@@ -55,6 +56,26 @@ def sp_set_chat_hist(data: Dict[str, Any]) -> Dict[str, Any]:
             success=False,
             error_code="BAD_REQUEST",
             error_message="필수 파라미터가 누락되었습니다.",
+        )
+    except OperationalError as e:
+        # MySQL 연결 관련 오류 처리
+        error_msg = str(e)
+        if "MySQL server has gone away" in error_msg or "ConnectionAbortedError" in error_msg:
+            return standard_response(
+                success=False,
+                error_code="DB_CONNECTION_ERROR",
+                error_message=f"데이터베이스 연결 오류: {error_msg}",
+            )
+        return standard_response(
+            success=False,
+            error_code="DB_OPERATIONAL_ERROR",
+            error_message=f"데이터베이스 작업 오류: {error_msg}",
+        )
+    except SQLAlchemyError as e:
+        return standard_response(
+            success=False,
+            error_code="DB_ERROR",
+            error_message=f"데이터베이스 오류: {str(e)}",
         )
     except Exception as e:
         return standard_response(

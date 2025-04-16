@@ -133,8 +133,8 @@ async def post_blog_chat(request: Request, chat_req: ChatRequest):
     )
 
     if result["success"] == False:
-        logger.info(
-            f"Request DB call error : {result["error"]["code"]}, msg : {result["error"]["message"]}"
+        logger.error(
+            f"Request DB call error : {result.get('error_code', 'UNKNOWN')}, msg : {result.get('error_message', 'Unknown error')}"
         )
 
     result = sp_set_chat_hist(
@@ -148,8 +148,8 @@ async def post_blog_chat(request: Request, chat_req: ChatRequest):
     )
 
     if result["success"] == False:
-        logger.info(
-            f"Response DB call error : {result["error"]["code"]}, msg : {result["error"]["message"]}"
+        logger.error(
+            f"Response DB call error : {result.get('error_code', 'UNKNOWN')}, msg : {result.get('error_message', 'Unknown error')}"
         )
 
     return ChatResponse(thread_id=thread_id, response=assistant_message)
