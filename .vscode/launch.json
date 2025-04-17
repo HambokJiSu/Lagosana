@@ -11,5 +11,11 @@
             "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}"
         }
+        ,{
+            "name": "Listen for Xdebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9000
+          }
     ]
 }

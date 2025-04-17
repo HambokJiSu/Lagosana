@@ -10,35 +10,52 @@
     <!-- 왼쪽 사이드바 (대화 기록) -->
     <div class="sidebar">
         <div class="brand">
-            <img src="/api/placeholder/130/40" alt="LagoSana 로고">
+            <!-- <img src="/api/placeholder/130/40" alt="LagoSana 로고"> -->
+            <img src="https://ecimg.cafe24img.com/pg1028b12001162094/platform66/web/upload/category/editor/2024/06/27/27b3562f49cec05d23bec700ae7d64e7.png" alt="LagoSana 로고">
         </div>
         <div class="history-title">대화 기록</div>
         <ul class="chat-history">
-            <li class="active">
-                <div class="history-item-title">마케팅 포스팅 작성</div>
-                <div class="history-item-preview">SNS 인스타그램 포스팅 작성</div>
-                <div class="history-item-date">오늘 14:32</div>
-            </li>
-            <li>
-                <div class="history-item-title">고객 리뷰 작성</div>
-                <div class="history-item-preview">필러 시술 후기 작성</div>
-                <div class="history-item-date">오늘 11:25</div>
-            </li>
-            <li>
-                <div class="history-item-title">라고사나 Q&A</div>
-                <div class="history-item-preview">가격 문의 및 상담</div>
-                <div class="history-item-date">어제</div>
-            </li>
-            <li>
-                <div class="history-item-title">이벤트 기획</div>
-                <div class="history-item-preview">봄맞이 프로모션 아이디어</div>
-                <div class="history-item-date">2025.04.13</div>
-            </li>
-            <li>
-                <div class="history-item-title">패키징 아이디어</div>
-                <div class="history-item-preview">선물용 패키지 디자인</div>
-                <div class="history-item-date">2025.04.10</div>
-            </li>
+            <?php
+            /**
+             * 채팅 기록 데이터 가져오기
+             * 
+             * get_chat_with_menu.php 파일을 호출하여 API에서 가져온 채팅 기록 데이터를
+             * JSON 형태로 받아와 화면에 표시합니다.
+             */
+            
+            // API 호출 결과 가져오기
+            require 'data/get_chat_with_menu.php';
+            $chat_history_data = get_chat_history();
+            
+            // 채팅 기록이 있는 경우
+            if (isset($chat_history_data['success']) && $chat_history_data['success'] === true && 
+                isset($chat_history_data['chat_history']) && !empty($chat_history_data['chat_history'])) {
+                
+                // 첫 번째 항목은 활성 상태로 표시
+                $first_item = true;
+                
+                // 채팅 기록 반복 처리
+                foreach ($chat_history_data['chat_history'] as $item) {
+                    // 활성 상태 클래스 설정
+                    $active_class = $first_item ? 'active' : '';
+                    
+                    // HTML 출력
+                    echo '<li class="' . $active_class . '" data-thread-id="' . htmlspecialchars($item['thread_id']) . '">';
+                    echo '<div class="history-item-title">' . htmlspecialchars($item['contents']) . '</div>';
+                    echo '<div class="history-item-date">' . htmlspecialchars($item['create_dtm']) . '</div>';
+                    echo '</li>';
+                    
+                    // 첫 번째 항목 처리 후 플래그 변경
+                    $first_item = false;
+                }
+            } else {
+                // 채팅 기록이 없는 경우 기본 항목 표시
+                echo '<li class="active" data-thread-id="default">';
+                echo '<div class="history-item-title">새로운 대화 시작하기</div>';
+                echo '<div class="history-item-date">지금</div>';
+                echo '</li>';
+            }
+            ?>
         </ul>
     </div>
     
@@ -199,7 +216,120 @@
                 // 클릭한 항목에 활성 클래스 추가
                 this.classList.add('active');
                 
-                // 실제 구현 시 이 부분에서 해당 대화 내용을 불러옴
+                // thread_id 가져오기
+                const threadId = this.getAttribute('data-thread-id');
+                
+                // 채팅 메시지 영역 초기화
+                const chatMessages = document.querySelector('.chat-messages');
+                chatMessages.innerHTML = '';
+                
+                // 로딩 메시지 표시
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'message message-bot';
+                loadingMessage.innerHTML = `
+                    <div class="message-content">
+                        대화 내용을 불러오는 중입니다...
+                    </div>
+                    <div class="message-time">${getCurrentTime()}</div>
+                `;
+                chatMessages.appendChild(loadingMessage);
+                
+                // API 호출하여 채팅 이력 가져오기
+                fetch(`data/get_chat_with_menu.php?thread_id=${threadId}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'same-origin'
+                })
+                    .then(response => {
+                        // 응답이 JSON 형식인지 확인
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            // 응답 본문을 텍스트로 읽어서 오류 메시지 확인
+                            return response.text().then(text => {
+                                console.error('서버 응답:', text);
+                                throw new TypeError('응답이 JSON 형식이 아닙니다.');
+                            });
+                        }
+
+                        // 응답 본문을 텍스트로 먼저 읽어서 JSON 파싱 오류 확인
+                        return response.text().then(text => {
+                            try {
+                                // JSON 파싱 시도
+                                return JSON.parse(text);
+                            } catch (e) {
+                                console.error('JSON 파싱 오류:', e);
+                                console.error('서버 응답:', text);
+                                throw new TypeError(`JSON 파싱 오류: ${e.message}`);
+                            }
+                        });
+                    })
+                    .then(data => {
+                        // 로딩 메시지 제거
+                        chatMessages.innerHTML = '';
+                        
+                        // 오류가 있는 경우 처리
+                        if (!data.success) {
+                            throw new Error(data.error || '알 수 없는 오류가 발생했습니다.');
+                        }
+                        
+                        // 채팅 이력이 있는 경우
+                        if (data.chat_thread_history && data.chat_thread_history.length > 0) {
+                            // 채팅 이력 표시
+                            data.chat_thread_history.forEach(chat => {
+                                const messageElement = document.createElement('div');
+                                
+                                // req_res 값에 따라 메시지 클래스 설정
+                                if (chat.req_res === 'REQ') {
+                                    messageElement.className = 'message message-bot';
+                                } else if (chat.req_res === 'RES') {
+                                    messageElement.className = 'message message-user';
+                                }
+                                
+                                // 메시지 내용 설정
+                                messageElement.innerHTML = `
+                                    <div class="message-content">
+                                        ${formatMessageContent(chat.contents)}
+                                    </div>
+                                    <div class="message-time">${chat.create_dtm}</div>
+                                `;
+                                
+                                // 채팅 메시지 영역에 추가
+                                chatMessages.appendChild(messageElement);
+                            });
+                        } else {
+                            // 채팅 이력이 없는 경우 기본 메시지 표시
+                            const defaultMessage = document.createElement('div');
+                            defaultMessage.className = 'message message-bot';
+                            defaultMessage.innerHTML = `
+                                <div class="message-content">
+                                    안녕하세요! 라고사나 전문 마케터입니다. 어떤 SNS 플랫폼에서 홍보하실 건가요?
+                                </div>
+                                <div class="message-time">${getCurrentTime()}</div>
+                            `;
+                            chatMessages.appendChild(defaultMessage);
+                        }
+                        
+                        // 스크롤을 맨 아래로
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    })
+                    .catch(error => {
+                        console.error('채팅 이력 불러오기 오류:', error);
+                        
+                        // 오류 메시지 표시
+                        chatMessages.innerHTML = '';
+                        const errorMessage = document.createElement('div');
+                        errorMessage.className = 'message message-bot';
+                        errorMessage.innerHTML = `
+                            <div class="message-content">
+                                채팅 이력을 불러오는 중 오류가 발생했습니다: ${error.message}
+                            </div>
+                            <div class="message-time">${getCurrentTime()}</div>
+                        `;
+                        chatMessages.appendChild(errorMessage);
+                    });
             });
         });
         
@@ -222,6 +352,13 @@
             return `${hours}:${minutes}`;
         }
         
+        // 개행 문자를 HTML <br> 태그로 변환하는 함수
+        function formatMessageContent(content) {
+            if (!content) return '';
+            // 개행 문자(\n)를 <br> 태그로 변환
+            return content.replace(/\n/g, '<br>');
+        }
+        
         // 메시지 전송 함수
         function sendMessage() {
             const input = document.querySelector('.chat-input');
@@ -235,7 +372,7 @@
                 userMessageElement.className = 'message message-user';
                 userMessageElement.innerHTML = `
                     <div class="message-content">
-                        ${message}
+                        ${formatMessageContent(message)}
                     </div>
                     <div class="message-time">${getCurrentTime()}</div>
                 `;
@@ -251,11 +388,12 @@
                 // 실제 구현 시 이 부분에서 API 호출하여 응답을 받아옴
                 // 여기서는 간단한 응답 시뮬레이션
                 setTimeout(() => {
+                    const botResponse = '감사합니다! 입력하신 내용을 확인 중입니다. 잠시만 기다려주세요.';
                     const botMessageElement = document.createElement('div');
                     botMessageElement.className = 'message message-bot';
                     botMessageElement.innerHTML = `
                         <div class="message-content">
-                            감사합니다! 입력하신 내용을 확인 중입니다. 잠시만 기다려주세요.
+                            ${formatMessageContent(botResponse)}
                         </div>
                         <div class="message-time">${getCurrentTime()}</div>
                     `;
