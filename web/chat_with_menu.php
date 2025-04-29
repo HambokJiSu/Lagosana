@@ -11,19 +11,21 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LagoSana 챗봇</title>
-    <link href="css/chat_with_menu.css?v=1.0.1" rel="stylesheet">
+    <link href="css/chat_with_menu.css?v=1.0.2" rel="stylesheet">
 </head>
 <body>
     <!-- 왼쪽 사이드바 (대화 기록) -->
-    <div class="sidebar">
+    <div class="sidebar-container">
         <div class="brand">
             <!-- <img src="/api/placeholder/130/40" alt="LagoSana 로고"> -->
             <img src="https://ecimg.cafe24img.com/pg1028b12001162094/platform66/web/upload/category/editor/2024/06/27/27b3562f49cec05d23bec700ae7d64e7.png" alt="LagoSana 로고">
         </div>
-        <div class="history-title">대화 기록</div>
-        <ul class="chat-history">
-            <!-- 채팅 기록은 JavaScript로 동적 로딩됩니다 -->
-        </ul>
+        <div class="sidebar">
+            <div class="history-title">대화 기록</div>
+            <ul class="chat-history">
+                <!-- 채팅 기록은 JavaScript로 동적 로딩됩니다 -->
+            </ul>
+        </div>
     </div>
     
     <!-- 중앙 채팅 영역 -->

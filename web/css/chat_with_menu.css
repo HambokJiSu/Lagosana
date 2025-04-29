@@ -19,31 +19,38 @@ body {
     color: var(--text-color);
     height: 100vh;
     display: flex;
+    margin: 0;
+    padding: 0;
 }
 
 /* 왼쪽 사이드바 (대화 기록) */
 .sidebar {
-    width: 260px;
+    width: 100%; /* 부모 컨테이너의 너비에 맞춤 */
     background-color: var(--light-gray);
-    border-right: 1px solid var(--border-color);
-    height: 100vh;
+    height: calc(100vh - 60px); /* brand 높이(60px)를 제외한 높이 */
     overflow-y: auto;
-    padding: 20px 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .brand {
     text-align: center;
     padding: 15px 0;
     border-bottom: 1px solid var(--border-color);
-    margin-bottom: 20px;
+    margin-bottom: 0;
+    overflow: hidden;
+    height: 60px;
+    width: 100%; /* 부모 컨테이너의 너비에 맞춤 */
+    background-color: var(--light-gray);
 }
 
 .brand img {
-    height: 40px;
+    width: 130px;
 }
 
 .history-title {
-    padding: 0 20px;
+    padding: 20px 20px 10px;
     font-size: 14px;
     color: #777;
     margin-bottom: 10px;
@@ -106,6 +113,8 @@ body {
     background-color: var(--background-color);
     border-bottom: 1px solid var(--border-color);
     padding: 0 20px;
+    height: 60px;
+    align-items: center;
 }
 
 .tab {
@@ -316,4 +325,14 @@ body {
     .sidebar {
         display: none;
     }
+}
+
+/* 사이드바 컨테이너 */
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    height: 100vh;
+    border-right: 1px solid var(--border-color);
+    background-color: var(--light-gray);
 }
