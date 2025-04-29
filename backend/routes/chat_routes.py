@@ -7,7 +7,7 @@ from openai import OpenAI
 
 from core.config import settings
 from model.chat_model import ChatRequest, ChatResponse
-from util.db_func import sp_set_chat_hist
+from util.db_func import sp_set_chat_hist, get_assistants_id
 
 # FastAPI 라우터 설정
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -74,9 +74,9 @@ def ask(assistant_id, thread_id, user_message):
 
 
 @router.post("/", response_model=ChatResponse)
-async def post_blog_chat(request: Request, chat_req: ChatRequest):
+async def post_chat(request: Request, chat_req: ChatRequest):
     """
-    블로그 채팅 요청 응답 메소드
+    챗봇 요청 응답 메소드
 
     Args:
         request: 시스템 변수
@@ -91,18 +91,25 @@ async def post_blog_chat(request: Request, chat_req: ChatRequest):
     client_host = request.client.host if request.client else "unknown"
     client_port = request.client.port if request.client else "unknown"
 
+    # assistant_id 호출(DB에 저장된 값)
+    result = get_assistants_id({"chatbot_tp_cd": chat_req.chatbot_tp_cd})
+    if result["success"] == False:
+        logger.error(
+            f"Request DB call error : {result.get('error_code', 'UNKNOWN')}, msg : {result.get('error_message', 'Unknown error')}"
+        )
+        raise HTTPException(status_code=500, detail="OpenAI assistant_id 호출 중 오류 발생")
+    
+    assistant_id = result["data"]["assistants_id"]
+
     logger.info(
-        f"Request from member_id: {chat_req.member_id}, client_ip: {client_host}:{client_port}, thread_id: {chat_req.thread_id}, chat: {chat_req.message}"
+        f"Request from member_id: {chat_req.member_id}, client_ip: {client_host}:{client_port}, thread_id: {chat_req.thread_id}, chatbot_tp_cd: {chat_req.chatbot_tp_cd}, chat: {chat_req.message}"
     )
 
     # 스레드 ID 확인 (없으면 신규 생성)
     thread_id = chat_req.thread_id if chat_req.thread_id else create_new_thread().id
 
-    # 대화 이력 업데이트: 사용자 메시지 추가
-    # messages = build_message_history(thread_id, chat_req.message)
-
     try:
-        run = ask(settings.API_GPT_ASSISTANT_ID, thread_id, chat_req.message)
+        run = ask(assistant_id, thread_id, chat_req.message)
         if run.status in ["failed", "expired", "cancelled"]:
             raise HTTPException(
                 status_code=500, detail=f"OpenAI API 호출 중 오류 발생 : {run.status}"
@@ -119,7 +126,7 @@ async def post_blog_chat(request: Request, chat_req: ChatRequest):
 
     elapsed_time = time.time() - start_time
     logger.info(
-        f"Request from member_id: {chat_req.member_id}, client_ip: {client_host}:{client_port}, thread_id: {chat_req.thread_id}, processed in: {elapsed_time:.3f}"
+        f"Request from member_id: {chat_req.member_id}, client_ip: {client_host}:{client_port}, thread_id: {thread_id}, chatbot_tp_cd: {chat_req.chatbot_tp_cd}, processed in: {elapsed_time:.3f}"
     )
 
     result = sp_set_chat_hist(
@@ -129,6 +136,7 @@ async def post_blog_chat(request: Request, chat_req: ChatRequest):
             "p_req_res": "REQ",
             "p_contents": chat_req.message,
             "p_res_term": 0,
+            "p_chatbot_tp_cd": chat_req.chatbot_tp_cd,
         }
     )
 
@@ -144,6 +152,7 @@ async def post_blog_chat(request: Request, chat_req: ChatRequest):
             "p_req_res": "RES",
             "p_contents": assistant_message,
             "p_res_term": elapsed_time,
+            "p_chatbot_tp_cd": chat_req.chatbot_tp_cd,
         }
     )
 

@@ -67,6 +67,9 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
         // 전역 변수로 현재 thread_id 저장
         let currentThreadId = null;
         
+        // 현재 선택된 탭의 chatbot_tp_cd 값 저장
+        let currentChatbotType = '01'; // 기본값은 '전문 마케터'
+        
         // 채팅 기록을 가져오는 함수
         async function loadChatHistory() {
             try {
@@ -287,7 +290,8 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                 const requestData = {
                     member_id: '<?php echo isset($_SESSION['lagosana_member_id']) ? $_SESSION['lagosana_member_id'] : ''; ?>', // 세션에서 회원 ID 가져오기
                     message: message,
-                    thread_id: currentThreadId // 현재 thread_id (없으면 null)
+                    thread_id: currentThreadId, // 현재 thread_id (없으면 null)
+                    chatbot_tp_cd: currentChatbotType // 현재 선택된 탭의 chatbot_tp_cd 값
                 };
                 
                 // API 호출
@@ -366,6 +370,28 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                 
                 // thread_id 초기화 (새로운 대화 시작)
                 currentThreadId = null;
+                
+                // 탭에 따른 chatbot_tp_cd 설정
+                switch(this.textContent) {
+                    case '전문 마케터':
+                        currentChatbotType = '01';
+                        break;
+                    case '리뷰 마법사':
+                        currentChatbotType = '02';
+                        break;
+                    case '라고사나 Q&A':
+                        currentChatbotType = '03';
+                        break;
+                    case '이벤트 플래너':
+                        currentChatbotType = '04';
+                        break;
+                    case '패키징 마법사':
+                        currentChatbotType = '05';
+                        break;
+                    case 'Daily SNS':
+                        currentChatbotType = '06';
+                        break;
+                }
                 
                 // 탭에 따른 초기 메시지 설정 (실제 구현 시 이 부분 확장)
                 const chatMessages = document.querySelector('.chat-messages');

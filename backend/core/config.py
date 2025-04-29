@@ -40,8 +40,7 @@ class Settings(BaseSettings):
 
     # API
     API_GPT_API_KEY: str
-    API_GPT_ASSISTANT_ID: str
-
+    
     # FRONT
     FRONT_BLOG_CHAT_API_URL: str
 
@@ -88,10 +87,6 @@ class Settings(BaseSettings):
     @property
     def API_GPT_API_KEY(self) -> str:
         return self.API_GPT_API_KEY
-
-    @property
-    def API_GPT_ASSISTANT_ID(self) -> str:
-        return self.API_GPT_ASSISTANT_ID
 
     @property
     def FRONT_BLOG_CHAT_API_URL(self) -> str:

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class ChatRequest(BaseModel):
     member_id: str  # 사용자 식별자 (없으면 빈 문자열)
     message: str
+    chatbot_tp_cd: str # 챗봇 유형 코드 (공통코드 참조)
     thread_id: Optional[str] = None  # 기존 대화 스레드 식별자 (없으면 신규 생성)
 
 
