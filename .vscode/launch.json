@@ -5,11 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "name": "Listen for Xdebug",
+            "type": "php",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "port": 9000
+        }
+        ,{
+            "name": "FastAPI-Custom",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd": "${workspaceFolder}/backend",  // 현재 working 디렉토리를 backend로 설정
+            "args": [
+                "main:app",
+                "--port",
+                "8088"
+            ],
+            "jinja": true,
         }
     ]
 }

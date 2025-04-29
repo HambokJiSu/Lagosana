@@ -10,6 +10,21 @@ if ($config['SERVER']['runEnv'] != "local") {
         if (empty($customer['group_name']) || $customer['group_name'] !== "VIP") {
             // VIP가 아닌 경우, 접근 제한 메시지를 출력하고 종료
             die("<script>alert('비정상적인 접근입니다.'); window.location.href='https://lagosana.com';</script>");
+        } else {
+            // 세션 유지 시간 설정 (30분)
+            ini_set('session.gc_maxlifetime', 1800); // 서버에서 세션 데이터 보존 시간
+            session_set_cookie_params(1800);         // 브라우저 쿠키 유효 시간
+
+            // 세션 시작
+            session_start();
+
+            // 세션에 값 저장
+            $_SESSION['lagosana_member_id']     = $customer['member_id'];
+            $_SESSION['lagosana_group_name']    = $customer['group_name'];
+            $_SESSION['lagosana_add_info_0']     = isset($customer['additional_information'][0]) ? $customer['additional_information'][0]['value'] : "";
+            $_SESSION['lagosana_add_info_1']     = isset($customer['additional_information'][1]) ? $customer['additional_information'][1]['value'] : "";
+            $_SESSION['lagosana_add_info_2']     = isset($customer['additional_information'][2]) ? $customer['additional_information'][2]['value'] : "";
+            $_SESSION['login_time'] = date('Y-m-d H:i:s');
         }
     } else {
         // POST 요청이 아닌 경우, 접근 제한 메시지를 출력하고 종료
@@ -17,10 +32,21 @@ if ($config['SERVER']['runEnv'] != "local") {
     }
 } else {
     // 로컬 환경에서는 테스트를 위해 하드코딩
-    $customer = [
-        'member_id' => 'test_chan',
-        'group_name' => 'VIP'
-    ];
+
+    // 세션 유지 시간 설정 (30분)
+    ini_set('session.gc_maxlifetime', 1800); // 서버에서 세션 데이터 보존 시간
+    session_set_cookie_params(1800);         // 브라우저 쿠키 유효 시간
+
+    // 세션 시작
+    session_start();
+
+    // 세션에 값 저장
+    $_SESSION['lagosana_member_id']     = "mirang";
+    $_SESSION['lagosana_group_name']    = "VIP";
+    $_SESSION['lagosana_add_info_0']     = "123-45-67890";  //  사업자 번호
+    $_SESSION['lagosana_add_info_1']     = "서판교";  //  주소
+    $_SESSION['lagosana_add_info_2']     = "햄 대표님 지휘아래 주저리 주저리";  //  소개말?
+    $_SESSION['login_time'] = date('Y-m-d H:i:s');
 }
 ?>
 <head>
@@ -33,39 +59,10 @@ if ($config['SERVER']['runEnv'] != "local") {
     <script type='text/javascript' src='/assets/sweetalert/sweetalert2.all.min.js'></script>
     <script>
         let fnOpenChatbot = (menu) => {
-            // POST 요청을 위한 폼 생성
-            const form = document.createElement('form');
-            form.method = 'POST';
+            //  세션 정보 검증으로 기존 Post 방식 제거처리
             if (menu == "sns_bot") {
-                form.action = 'lagosana_sns_bot.php';
+                window.location.href = "chat_with_menu.php";
             }
-            
-            // customer 데이터를 JSON으로 변환하여 hidden input에 추가
-            const customerData = {
-                member_id: "<?php echo $customer['member_id'] ?? ''; ?>",
-                group_name: "<?php echo $customer['group_name'] ?? ''; ?>",
-                additional_information: [
-                    <?php if(isset($customer['additional_information'][0])): ?>
-                    { value: "<?php echo $customer['additional_information'][0]['value'] ?? ''; ?>" },
-                    <?php endif; ?>
-                    <?php if(isset($customer['additional_information'][1])): ?>
-                    { value: "<?php echo $customer['additional_information'][1]['value'] ?? ''; ?>" },
-                    <?php endif; ?>
-                    <?php if(isset($customer['additional_information'][2])): ?>
-                    { value: "<?php echo $customer['additional_information'][2]['value'] ?? ''; ?>" }
-                    <?php endif; ?>
-                ]
-            };
-            
-            const customerInput = document.createElement('input');
-            customerInput.type = 'hidden';
-            customerInput.name = 'customer';
-            customerInput.value = JSON.stringify(customerData);
-            form.appendChild(customerInput);
-            
-            // 폼을 문서에 추가하고 제출
-            document.body.appendChild(form);
-            form.submit();
         }
 
         let fnComingSoon = () => {
