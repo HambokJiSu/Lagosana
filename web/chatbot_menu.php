@@ -21,9 +21,9 @@ if ($config['SERVER']['runEnv'] != "local") {
             // 세션에 값 저장
             $_SESSION['lagosana_member_id']     = $customer['member_id'];
             $_SESSION['lagosana_group_name']    = $customer['group_name'];
-            $_SESSION['lagosana_add_info_0']     = isset($customer['additional_information'][0]) ? $customer['additional_information'][0]['value'] : "";
-            $_SESSION['lagosana_add_info_1']     = isset($customer['additional_information'][1]) ? $customer['additional_information'][1]['value'] : "";
-            $_SESSION['lagosana_add_info_2']     = isset($customer['additional_information'][2]) ? $customer['additional_information'][2]['value'] : "";
+            $_SESSION['lagosana_add_info_0']     = isset($customer['additional_information'][0]) ? $customer['additional_information'][0]['value'] : "";    //  사업자등록번호
+            $_SESSION['lagosana_add_info_1']     = isset($customer['additional_information'][1]) ? $customer['additional_information'][1]['value'] : "";    //  사업장명칭
+            $_SESSION['lagosana_add_info_2']     = isset($customer['additional_information'][2]) ? $customer['additional_information'][2]['value'] : "";    //  사업장특징
             $_SESSION['login_time'] = date('Y-m-d H:i:s');
         }
     } else {
@@ -44,8 +44,8 @@ if ($config['SERVER']['runEnv'] != "local") {
     $_SESSION['lagosana_member_id']     = "mirang";
     $_SESSION['lagosana_group_name']    = "VIP";
     $_SESSION['lagosana_add_info_0']     = "123-45-67890";  //  사업자 번호
-    $_SESSION['lagosana_add_info_1']     = "서판교";  //  주소
-    $_SESSION['lagosana_add_info_2']     = "햄 대표님 지휘아래 주저리 주저리";  //  소개말?
+    $_SESSION['lagosana_add_info_1']     = "린아이티";  //  샵 이름
+    $_SESSION['lagosana_add_info_2']     = "햄 대표님 지휘아래 주저리 주저리";  //  샵 정보
     $_SESSION['login_time'] = date('Y-m-d H:i:s');
 }
 ?>

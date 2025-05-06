@@ -51,9 +51,10 @@ function callApi($url) {
 function get_thread_history() {
     // 사용자 ID 가져오기
     $user_id = $_SESSION['lagosana_member_id'];
+    $chatbot_tp = $_GET['chatbotTp'] ?? "06"; // 기본값 설정
 
     // API URL 구성
-    $api_url = getCurrentDomain() . "/chat-hist/user-thread/{$user_id}?read_cnt=20";
+    $api_url = getCurrentDomain() . "/chat-hist/user-thread/{$user_id}/{$chatbot_tp}?read_cnt=20";
 
     // API 호출 및 응답 처리
     $api_response = callApi($api_url);

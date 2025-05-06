@@ -75,7 +75,7 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
         // 채팅 기록을 가져오는 함수
         async function loadChatHistory() {
             try {
-                const response = await fetch('data/ajax/get_ajax.php?tp=chatThread', {
+                const response = await fetch('data/ajax/get_ajax.php?tp=chatThread&chatbotTp=' + currentChatbotType, {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
@@ -178,7 +178,7 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                                 const messageElement = document.createElement('div');
                                 messageElement.className = `message message-${chat.req_res === 'REQ' ? 'user' : 'bot'}`;
                                 messageElement.innerHTML = `
-                                    <div class="message-content">${chat.contents}</div>
+                                    <div class="message-content">${chat.contents.replace(/\n/g, '<br>')}</div>
                                     <div class="message-time">${chat.create_dtm}</div>
                                 `;
                                 chatMessages.appendChild(messageElement);
@@ -248,7 +248,7 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
         // 메시지 전송 함수
         function sendMessage() {
             const input = document.querySelector('.chat-input');
-            const message = input.value.trim();
+            let message = input.value.trim();
             
             if (message) {
                 const chatMessages = document.querySelector('.chat-messages');
@@ -287,6 +287,12 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                 `;
                 chatMessages.appendChild(loadingMessageElement);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Daily SNS 챗봇이며 새대화 시작인 경우 사업장 특징 정보를 추가
+                if (currentChatbotType === '06' && currentThreadId === null) {
+                    message += `\n샵 이름: <?php echo $_SESSION['lagosana_add_info_1']; ?>`;
+                    message += `\n샵 정보: <?php echo $_SESSION['lagosana_add_info_2']; ?>`;
+                }
                 
                 // API 호출을 위한 데이터 준비
                 const requestData = {
@@ -295,9 +301,11 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                     thread_id: currentThreadId, // 현재 thread_id (없으면 null)
                     chatbot_tp_cd: currentChatbotType // 현재 선택된 탭의 chatbot_tp_cd 값
                 };
+
+                const chatUrl = window.location.protocol + '//' + window.location.hostname + ':8088/chat';
                 
                 // API 호출
-                fetch('http://localhost:8088/chat', {
+                fetch(chatUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -394,6 +402,8 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                         currentChatbotType = '06';
                         break;
                 }
+
+                loadChatHistory(); // 채팅 기록 로드
                 
                 // 탭에 따른 초기 메시지 설정 (실제 구현 시 이 부분 확장)
                 const chatMessages = document.querySelector('.chat-messages');
@@ -418,7 +428,7 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                         initialMessage = '안녕하세요! 라고사나 패키징 마법사입니다. 어떤 패키징 아이디어가 필요하신가요?';
                         break;
                     case 'Daily SNS':
-                        initialMessage = '안녕하세요! 라고사나 Daily SNS 챗봇입니다. 오늘의 SNS 콘텐츠 주제는 무엇인가요?';
+                        initialMessage = '안녕하세요! 라고사나 Daily SNS 챗봇입니다. Blog, Facebook, Instagram, Thread 중 하나를 골라주세요.';
                         break;
                 }
                 

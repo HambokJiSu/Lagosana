@@ -82,9 +82,10 @@ async def get_activity_logs(
         )
 
 # 사용자별 대화 그룹별 조회 API
-@router.get("/user-thread/{user_id}")
+@router.get("/user-thread/{user_id}/{chatbot_tp}")
 async def get_user_thread(
     user_id: str,
+    chatbot_tp: str,
     read_cnt: Optional[int] = Query(None, description="조회할 대화 그룹별 건수"),
 ) -> Dict[str, Any]:
     """
@@ -109,11 +110,12 @@ async def get_user_thread(
                         END AS contents
                 FROM	tb_chat_hist
                 WHERE	user_id = :user_id
+                AND     chatbot_tp_cd = :chatbot_tp
                 AND		chat_seq = 1
                 ORDER BY create_dtm DESC
                 LIMIT :read_cnt
             """
-            params = {"user_id": user_id, "read_cnt": read_cnt}
+            params = {"user_id": user_id, "chatbot_tp": chatbot_tp, "read_cnt": read_cnt}
 
             result = conn.execute(text(query), params)
             logs = [dict(row._mapping) for row in result]

@@ -10,3 +10,4 @@ blog_chat.exe
 main.exe*
 backend/main.spec
 .env
+web/.htaccess
