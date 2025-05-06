@@ -1,6 +1,18 @@
 <?php
 session_start();
 
+function getCurrentDomain() {
+    // HTTP 또는 HTTPS 판별
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+                || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://";
+
+    // 호스트 이름 가져오기
+    $host = $_SERVER['HTTP_HOST'];
+
+    // 최종 도메인 주소 반환
+    return $protocol . $host;
+}
+
 // API 호출 함수
 function callApi($url) {
     // cURL 초기화
@@ -41,7 +53,7 @@ function get_thread_history() {
     $user_id = $_SESSION['lagosana_member_id'];
 
     // API URL 구성
-    $api_url = "http://localhost:8088/chat-hist/user-thread/{$user_id}?read_cnt=20";
+    $api_url = getCurrentDomain() . "/chat-hist/user-thread/{$user_id}?read_cnt=20";
 
     // API 호출 및 응답 처리
     $api_response = callApi($api_url);
@@ -99,7 +111,7 @@ function get_chat_thread_history($thread_id) {
     $user_id = $_SESSION['lagosana_member_id'];
 
     // API URL 구성
-    $api_url = "http://localhost:8088/chat-hist/user-chat/{$user_id}/{$thread_id}";
+    $api_url = getCurrentDomain() . "/chat-hist/user-chat/{$user_id}/{$thread_id}";
 
     // API 호출 및 응답 처리
     $api_response = callApi($api_url);
