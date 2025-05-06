@@ -10,7 +10,7 @@ function getCurrentDomain() {
     $host = $_SERVER['HTTP_HOST'];
 
     // 최종 도메인 주소 반환
-    return $protocol . $host;
+    return $protocol . $host . ":8088";
 }
 
 // API 호출 함수
