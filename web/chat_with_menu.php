@@ -303,6 +303,8 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                 };
 
                 const chatUrl = window.location.protocol + '//' + window.location.hostname + ':8088/chat';
+
+                console.log(`chatUrl : ${chatUrl}`);    //  TODO : 삭제 예정
                 
                 // API 호출
                 fetch(chatUrl, {

@@ -11,3 +11,4 @@ main.exe*
 backend/main.spec
 .env
 web/.htaccess
+certs/*
