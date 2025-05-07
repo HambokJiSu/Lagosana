@@ -302,10 +302,8 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                     chatbot_tp_cd: currentChatbotType // 현재 선택된 탭의 chatbot_tp_cd 값
                 };
 
-                const chatUrl = window.location.protocol + '//' + window.location.hostname + ':8088/chat';
+                const chatUrl = window.location.protocol + '//' + window.location.hostname + ':8088/chat/';
 
-                console.log(`chatUrl : ${chatUrl}`);    //  TODO : 삭제 예정
-                
                 // API 호출
                 fetch(chatUrl, {
                     method: 'POST',
