@@ -12,6 +12,7 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LagoSana 챗봇</title>
     <link href="css/chat_with_menu.css?v=1.0.2" rel="stylesheet">
+    <script type='text/javascript' src='/assets/sweetalert/sweetalert2.all.min.js'></script>
 </head>
 <body>
     <!-- 왼쪽 사이드바 (대화 기록) -->
@@ -32,12 +33,12 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
     <div class="chat-container">
         <!-- 상단 메뉴 -->
         <div class="chat-tabs">
-            <div class="tab active">전문 마케터</div>
-            <div class="tab">리뷰 마법사</div>
-            <div class="tab">라고사나 Q&A</div>
-            <div class="tab">이벤트 플래너</div>
-            <div class="tab">패키징 마법사</div>
-            <div class="tab">Daily SNS</div>
+            <div class="tab" data-chatbot-tp="01">전문 마케터</div>
+            <div class="tab" data-chatbot-tp="02">리뷰 마법사</div>
+            <div class="tab" data-chatbot-tp="03">라고사나 Q&A</div>
+            <div class="tab" data-chatbot-tp="04">이벤트 플래너</div>
+            <div class="tab" data-chatbot-tp="05">패키징 마법사</div>
+            <div class="tab" data-chatbot-tp="06">Daily SNS</div>
         </div>
         
         <!-- 채팅 메시지 영역 -->
@@ -70,7 +71,8 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
         let currentThreadId = null;
         
         // 현재 선택된 탭의 chatbot_tp_cd 값 저장
-        let currentChatbotType = '01'; // 기본값은 '전문 마케터'
+        const params = new URLSearchParams(document.location.search);
+        let currentChatbotType = params.has("chatbotTp") ? params.get("chatbotTp") : '06'; // chatbot_menu.php 페이지에서 파라미터로 전달받음, 누락시 06으로 설정
         
         // 채팅 기록을 가져오는 함수
         async function loadChatHistory() {
@@ -218,9 +220,52 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
             });
         }
         
-        // 페이지 로드 시 채팅 기록 로드
+        // 페이지 로드 시 채팅 기록 로드 및 초기 탭 활성화
         document.addEventListener('DOMContentLoaded', function() {
             loadChatHistory();
+            
+            // 현재 chatbot_tp_cd에 해당하는 탭 활성화
+            const activeTab = document.querySelector(`.tab[data-chatbot-tp="${currentChatbotType}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+                
+                // 초기 메시지 표시
+                const chatMessages = document.querySelector('.chat-messages');
+                chatMessages.innerHTML = '';
+                
+                let initialMessage = '';
+                switch(currentChatbotType) {
+                    case '01':
+                        initialMessage = '안녕하세요! 라고사나 전문 마케터입니다. 어떤 SNS 플랫폼에서 홍보하실 건가요?';
+                        break;
+                    case '02':
+                        initialMessage = '안녕하세요! 라고사나 리뷰 마법사입니다. 시술 후 어떤 변화가 있었나요?';
+                        break;
+                    case '03':
+                        initialMessage = '안녕하세요! 라고사나 Q&A 도우미입니다. 무엇을 도와드릴까요?';
+                        break;
+                    case '04':
+                        initialMessage = '안녕하세요! 라고사나 이벤트 플래너입니다. 어떤 이벤트를 기획하고 싶으신가요?';
+                        break;
+                    case '05':
+                        initialMessage = '안녕하세요! 라고사나 패키징 마법사입니다. 어떤 패키징 아이디어가 필요하신가요?';
+                        break;
+                    case '06':
+                        initialMessage = '안녕하세요! 라고사나 Daily SNS 챗봇입니다. Blog, Facebook, Instagram, Thread 중 하나를 골라주세요.';
+                        break;
+                }
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message message-bot';
+                messageElement.innerHTML = `
+                    <div class="message-content">
+                        ${initialMessage}
+                    </div>
+                    <div class="message-time">${getCurrentTime()}</div>
+                `;
+                
+                chatMessages.appendChild(messageElement);
+            }
         });
         
         // Enter 키로 메시지 전송 시에도 채팅 기록 갱신
@@ -372,6 +417,14 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
         // 탭 전환 기능
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
+                const chatbotType = this.getAttribute('data-chatbot-tp');
+                
+                // 03(라고사나 Q&A) 또는 05(패키징 마법사)인 경우 Coming Soon 알림
+                if (chatbotType === '03' || chatbotType === '05') {
+                    Swal.fire("Coming Soon", "서비스 준비 중입니다.", "info");
+                    return;
+                }
+                
                 // 활성 탭 클래스 제거
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 
@@ -381,53 +434,34 @@ if (empty($_SESSION['lagosana_group_name']) || $_SESSION['lagosana_group_name'] 
                 // thread_id 초기화 (새로운 대화 시작)
                 currentThreadId = null;
                 
-                // 탭에 따른 chatbot_tp_cd 설정
-                switch(this.textContent) {
-                    case '전문 마케터':
-                        currentChatbotType = '01';
-                        break;
-                    case '리뷰 마법사':
-                        currentChatbotType = '02';
-                        break;
-                    case '라고사나 Q&A':
-                        currentChatbotType = '03';
-                        break;
-                    case '이벤트 플래너':
-                        currentChatbotType = '04';
-                        break;
-                    case '패키징 마법사':
-                        currentChatbotType = '05';
-                        break;
-                    case 'Daily SNS':
-                        currentChatbotType = '06';
-                        break;
-                }
+                // 탭의 data-chatbot-tp 속성값으로 chatbot_tp_cd 설정
+                currentChatbotType = chatbotType;
 
                 loadChatHistory(); // 채팅 기록 로드
                 
-                // 탭에 따른 초기 메시지 설정 (실제 구현 시 이 부분 확장)
+                // 탭에 따른 초기 메시지 설정
                 const chatMessages = document.querySelector('.chat-messages');
                 chatMessages.innerHTML = ''; // 기존 메시지 지우기
                 
                 let initialMessage = '';
                 
-                switch(this.textContent) {
-                    case '전문 마케터':
+                switch(currentChatbotType) {
+                    case '01':
                         initialMessage = '안녕하세요! 라고사나 전문 마케터입니다. 어떤 SNS 플랫폼에서 홍보하실 건가요?';
                         break;
-                    case '리뷰 마법사':
+                    case '02':
                         initialMessage = '안녕하세요! 라고사나 리뷰 마법사입니다. 시술 후 어떤 변화가 있었나요?';
                         break;
-                    case '라고사나 Q&A':
+                    case '03':
                         initialMessage = '안녕하세요! 라고사나 Q&A 도우미입니다. 무엇을 도와드릴까요?';
                         break;
-                    case '이벤트 플래너':
+                    case '04':
                         initialMessage = '안녕하세요! 라고사나 이벤트 플래너입니다. 어떤 이벤트를 기획하고 싶으신가요?';
                         break;
-                    case '패키징 마법사':
+                    case '05':
                         initialMessage = '안녕하세요! 라고사나 패키징 마법사입니다. 어떤 패키징 아이디어가 필요하신가요?';
                         break;
-                    case 'Daily SNS':
+                    case '06':
                         initialMessage = '안녕하세요! 라고사나 Daily SNS 챗봇입니다. Blog, Facebook, Instagram, Thread 중 하나를 골라주세요.';
                         break;
                 }

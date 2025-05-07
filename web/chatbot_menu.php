@@ -59,10 +59,7 @@ if ($config['SERVER']['runEnv'] != "local") {
     <script type='text/javascript' src='/assets/sweetalert/sweetalert2.all.min.js'></script>
     <script>
         let fnOpenChatbot = (menu) => {
-            //  세션 정보 검증으로 기존 Post 방식 제거처리
-            if (menu == "sns_bot") {
-                window.location.href = "chat_with_menu.php";
-            }
+            window.location.href = `chat_with_menu.php?chatbotTp=${menu}`;
         }
 
         let fnComingSoon = () => {
@@ -86,7 +83,7 @@ if ($config['SERVER']['runEnv'] != "local") {
         </div>
         <div id='swiper_container' class='swiper_container'>
             <div id='cards' class='cards'>
-                <div id='chat_card' class='chat_card' onclick="fnOpenChatbot('sns_bot');">
+                <div id='chat_card' class='chat_card' onclick="fnOpenChatbot('01');">
                     <div id='card_contents' class='card_contents'>
                         <div id='card_name_icon' class='card_name_icon'>
                             <div id='card_name' class='card_name'>
@@ -97,7 +94,7 @@ if ($config['SERVER']['runEnv'] != "local") {
                             매력적인 SNS 홍보 글 생성</div>
                     </div>
                 </div>
-                <div id='chat_card' class='chat_card' onclick="fnComingSoon()">
+                <div id='chat_card' class='chat_card' onclick="fnOpenChatbot('02');">
                     <div id='card_contents' class='card_contents'>
                         <div id='card_name_icon' class='card_name_icon'>
                             <div id='card_name' class='card_name'>
@@ -124,7 +121,7 @@ if ($config['SERVER']['runEnv'] != "local") {
                 </div>
             </div>
             <div id='cards' class='cards'>
-                <div id='chat_card' class='chat_card' onclick="fnComingSoon()">
+                <div id='chat_card' class='chat_card' onclick="fnOpenChatbot('04');">
                     <div id='card_contents' class='card_contents'>
                         <div id='card_name_icon' class='card_name_icon'>
                             <div id='card_name' class='card_name'>
@@ -151,7 +148,7 @@ if ($config['SERVER']['runEnv'] != "local") {
                         </div>
                     </div>
                 </div>
-                <div id='chat_card' class='chat_card' onclick="fnComingSoon()">
+                <div id='chat_card' class='chat_card' onclick="fnOpenChatbot('06');">
                     <div id='card_contents' class='card_contents'>
                         <div id='card_name_icon' class='card_name_icon'>
                             <div id='card_name' class='card_name'>
