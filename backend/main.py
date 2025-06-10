@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_client import make_asgi_app
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
 from datetime import datetime
 
 from core.config import settings
+from core.logging import setup_logging
 from routes import chat_routes, chat_hist_routes
 
 # 애플리케이션 시작 시 한 번만 실행되는 로거 설정 함수
@@ -45,42 +47,60 @@ def setup_logger_once(pLog_dir, pLog_backup_terms):
 # 전역적으로 로거 인스턴스를 설정
 app_logger = setup_logger_once(settings.SERVER_LOG_DIR, settings.SERVER_LOG_BACKUP_TERMS)
 
-# FastAPI 앱 생성 및 로깅 설정
+# FastAPI 앱 생성
 app = FastAPI(
     title="Lagosana Chat API",
     debug=settings.SERVER_DEBUG,
 )
 
-app.include_router(chat_routes.router)      #  블로그 작성 도움 API 라우터 추가
-app.include_router(chat_hist_routes.router) #  블로그 작성 통계 API 라우터 추가
+# Prometheus 메트릭 엔드포인트 추가
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
+
+# 라우터 추가
+app.include_router(chat_routes.router)
+app.include_router(chat_hist_routes.router)
 
 chat_routes.logger = app_logger
 chat_hist_routes.logger = app_logger
 
-# CORS 미들웨어 추가
+# CORS 미들웨어 설정
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost",
         "https://ai.lagosana.com",
-    ],  # 특정 도메인만 허용하려면 "*" 대신 ["http://localhost:3000"] 같은 리스트를 사용
+    ],
     allow_credentials=True,
-    allow_methods=["*"],  # 모든 HTTP 메서드 허용 (OPTIONS 포함)
-    allow_headers=["*"],  # 모든 헤더 허용
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 if __name__ == "__main__":
     import uvicorn
-
-    if settings.SERVER_RUN_ENV == "prod":  # 운영환경에서는 SSL 적용
+    
+    # 운영 환경 설정
+    if settings.SERVER_RUN_ENV == "prod":
         uvicorn.run(
-            app,
+            "main:app",
             host="0.0.0.0",
             port=8088,
             workers=1,
             ssl_certfile=settings.CERTS_SSL_CERTFILE,
             ssl_keyfile=settings.CERTS_SSL_KEYFILE,
             ssl_keyfile_password=settings.CERTS_SSL_KEYFILE_PASS,
+            loop="uvloop",  # uvloop 사용으로 성능 향상
+            http="httptools",  # httptools 사용으로 성능 향상
+            log_config=None,  # 커스텀 로깅 설정 사용
         )
-    else:  # 개발환경에서는 SSL 미적용
-        uvicorn.run(app, host="0.0.0.0", port=8088)
+    else:
+        uvicorn.run(
+            "main:app",
+            host="0.0.0.0",
+            port=8088,
+            workers=8,
+            reload=True,  # 개발 환경에서는 자동 리로드 활성화
+            loop="uvloop",
+            http="httptools",
+            log_config=None,
+        )

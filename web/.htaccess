@@ -1,8 +1,0 @@
-﻿RewriteEngine On
-
-# 인증 경로는 리다이렉트 하지 않음
-RewriteCond %{REQUEST_URI} !^/.well-known/acme-challenge/
-
-# 나머지 요청은 https로 리다이렉트
-RewriteCond %{HTTPS} off
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

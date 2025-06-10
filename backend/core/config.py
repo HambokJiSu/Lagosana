@@ -55,6 +55,19 @@ class Settings(BaseSettings):
             path=self.MYSQL_DB,
             query="charset=utf8mb4"  # charset 추가
         )
+    
+    @property
+    def SQLALCHEMY_DATABASE_URL_AIO(self) -> MySQLDsn:
+        return MySQLDsn.build(
+            scheme="mysql+aiomysql",
+            username=self.MYSQL_USER,
+            password=self.MYSQL_PASSWORD,
+            host=self.MYSQL_SERVER,
+            port=self.MYSQL_PORT,
+            path=self.MYSQL_DB,
+            # path=f"/{self.MYSQL_DB}",
+            query="charset=utf8mb4"  # charset 추가
+        )
 
     @property
     def SERVER_RUN_ENV(self) -> str:
